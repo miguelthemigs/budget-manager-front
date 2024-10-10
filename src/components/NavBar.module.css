@@ -3,7 +3,7 @@
   list-style: none;
   position: fixed;
   top: 0;
-  background: grey;
+  background: rgb(109, 109, 114);
   left: 0;
   bottom: 0;
   height: 100vh;
@@ -42,4 +42,8 @@ a {
   color: white;
   text-transform: uppercase;
   font-weight: bold;
+}
+
+a:link, a:visited, a:hover, a:active {
+  color: white;
 }

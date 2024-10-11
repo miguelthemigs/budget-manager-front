@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import "./ExpensePage.css"; // Import the CSS file
 
 function ExpensePage() {
   // State for form fields
@@ -94,7 +95,7 @@ function ExpensePage() {
   };
 
   return (
-    <div>
+    <div className="container">
       <h1>Expense Manager</h1>
 
       <form onSubmit={handleAddExpense}>
@@ -107,11 +108,7 @@ function ExpensePage() {
           >
             <option value="">Select a category</option>
             {categories.map((cat) => (
-              <option key={cat.id}>
-                {`${cat}`}
-                {/* Adjust according to your category structure */}
-                
-              </option>
+              <option key={cat.id}>{cat}</option> // Adjust according to your category structure
             ))}
           </select>
         </div>
@@ -149,7 +146,7 @@ function ExpensePage() {
       </form>
 
       {/* Filter by Date */}
-      <div>
+      <div className="filter-section">
         <label>Filter by Month:</label>
         <input
           type="month"

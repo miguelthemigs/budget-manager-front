@@ -1,0 +1,100 @@
+/* ExpensePage.css */
+
+/* General styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #121212; /* Dark background */
+    color: #ffffff; /* Light text color */
+    margin: 0;
+    padding: 20px;
+  }
+  
+  /* Main container for the expense manager */
+  h1 {
+    text-align: center;
+    color: #ffffff; /* Light text color */
+  }
+  
+  h2 {
+    color: #ffffff; /* Light text color */
+  }
+  
+  .container {
+    max-width: 600px;
+    margin: 0 auto;
+    background: #1e1e1e; /* Darker container background */
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(255, 255, 255, 0.1); /* Slightly lighter shadow */
+  }
+  
+  /* Form styles */
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Space between form elements */
+    margin-bottom: 20px;
+  }
+  
+  label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #ffffff; /* Light label color */
+  }
+  
+  input[type="text"],
+  input[type="number"],
+  input[type="date"],
+  select {
+    padding: 10px;
+    border: 1px solid #ccc; /* Light border */
+    border-radius: 4px;
+    font-size: 16px;
+    width: 100%; /* Full width */
+    background-color: #333333; /* Dark input background */
+    color: #ffffff; /* Light text color */
+  }
+  
+  input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none; /* Hides spin buttons */
+  }
+  
+  button {
+    padding: 10px;
+    background-color: #28a745; /* Green button */
+    color: #ffffff; /* Light text color */
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  
+  button:hover {
+    background-color: #218838; /* Darker green on hover */
+  }
+  
+  /* Filter section */
+  .filter-section {
+    margin: 20px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  /* Expenses List */
+  ul {
+    list-style-type: none; /* Remove bullet points */
+    padding: 0; /* Remove padding */
+  }
+  
+  li {
+    background-color: #2a2a2a; /* Dark list item background */
+    padding: 10px;
+    margin: 5px 0; /* Space between items */
+    border-radius: 4px;
+  }
+  
+  strong {
+    color: #ffffff; /* Light text color for strong */
+  }
+  

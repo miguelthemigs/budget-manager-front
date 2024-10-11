@@ -1,0 +1,49 @@
+.navBar {
+  overflow-y: scroll;
+  list-style: none;
+  position: fixed;
+  top: 0;
+  background: rgb(109, 109, 114);
+  left: 0;
+  bottom: 0;
+  height: 100vh;
+  width: 100%;
+  max-width: 290px;
+  z-index: 9;
+}
+
+.toggleButton {
+  background: none; /* No background */
+  border: none; /* No border */
+  position: fixed; /* Fixed position */
+  top: 10px; /* Distance from the top */
+  left: 10px; /* Distance from the left */
+  cursor: pointer; /* Pointer cursor */
+  z-index: 10; /* Above the navbar */
+}
+
+.bar {
+  display: block;
+  width: 30px; /* Width of bars */
+  height: 3px; /* Height of bars */
+  margin: 6px 0; /* Spacing between bars */
+  background-color: white; /* Bar color */
+  transition: 0.4s; /* Smooth transition */
+}
+
+.menuNav li:first-child {
+  margin-top: 5rem; /* Space for the first link */
+}
+
+a {
+  display: block;
+  padding: 10px 40px;
+  text-decoration: none;
+  color: white;
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+a:link, a:visited, a:hover, a:active {
+  color: white;
+}

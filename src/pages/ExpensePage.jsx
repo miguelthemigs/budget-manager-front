@@ -28,7 +28,7 @@ function ExpensePage() {
     const fetchExpenses = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8080/expenses?userId=${userId}`
+          `http://localhost:8090/expenses?userId=${userId}`
         );
         setExpenses(response.data);
       } catch (error) {
@@ -44,7 +44,7 @@ function ExpensePage() {
     const fetchCategories = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:8080/enums/allCategories"
+          "http://localhost:8090/enums/allCategories"
         ); // Adjust this endpoint
         setCategories(response.data);
       } catch (error) {
@@ -76,11 +76,11 @@ function ExpensePage() {
         userId: userId, // Associate the expense with the user
       };
 
-      await axios.post("http://localhost:8080/expenses", newExpense);
+      await axios.post("http://localhost:8090/expenses", newExpense);
 
       // Refresh the expense list after adding a new expense
       const response = await axios.get(
-        `http://localhost:8080/expenses?userId=${userId}`
+        `http://localhost:8090/expenses?userId=${userId}`
       );
       setExpenses(response.data);
 

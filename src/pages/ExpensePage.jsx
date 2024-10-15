@@ -9,21 +9,20 @@ function ExpensePage() {
   const [description, setDescription] = useState("");
   const [amount, setAmount] = useState("");
   const [date, setDate] = useState("");
+  const [editMode, setEditMode] = useState(false); // Edit mode state
+  const [editExpenseId, setEditExpenseId] = useState(null); // ID of the expense being edited
+  const [montlySpent, setMontlySpent] = useState(0.0);
 
   // State for expenses and filter
   const [expenses, setExpenses] = useState([]);
   const [filterDate, setFilterDate] = useState(() => {
-    // Default filter: current month (YYYY-MM)
     const now = new Date();
-    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(
-      2,
-      "0"
-    )}`;
+    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
   });
 
   const userId = 1; // Example userId, you can modify this
 
-  // Fetch expenses from the backend (filtered by userId)
+  // Fetch expenses from the backend
   useEffect(() => {
     const fetchExpenses = async () => {
       try {
@@ -44,8 +43,8 @@ function ExpensePage() {
     const fetchCategories = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:8090/enums/allCategories"
-        ); // Adjust this endpoint
+          "http://localhost:8080/enums/allCategories"
+        );
         setCategories(response.data);
       } catch (error) {
         console.error("Error fetching categories", error);
@@ -64,41 +63,122 @@ function ExpensePage() {
     return expenseYearMonth === filterDate;
   });
 
-  // Handle form submission to add a new expense
-  const handleAddExpense = async (e) => {
+  // Handle form submission to add or edit an expense
+  const handleAddOrEditExpense = async (e) => {
     e.preventDefault();
     try {
       const newExpense = {
+        id: editExpenseId,
         category,
         description,
         amount: parseFloat(amount),
         date,
-        userId: userId, // Associate the expense with the user
+        userId: userId,
       };
 
-      await axios.post("http://localhost:8090/expenses", newExpense);
+      if (editMode) {
+        // Send a PUT request to update the expense
+        await axios.put(`http://localhost:8090/expenses/${editExpenseId}`, newExpense);
+      } else {
+        // Send a POST request to add a new expense
+        await axios.post("http://localhost:8090/expenses", newExpense);
+      }
 
-      // Refresh the expense list after adding a new expense
+      // Refresh the expense list after adding or editing
       const response = await axios.get(
         `http://localhost:8090/expenses?userId=${userId}`
       );
       setExpenses(response.data);
 
-      // Clear the form
+      // Clear the form and exit edit mode
       setCategory("");
       setDescription("");
       setAmount("");
       setDate("");
+      setEditMode(false);
+      setEditExpenseId(null);
     } catch (error) {
-      console.error("Error adding expense", error);
+      console.error("Error adding/editing expense", error);
     }
   };
 
-  return (
-    <div className="container">
-      <h1>Expense Manager</h1>
+  // Handle edit click
+  const handleEditClick = (expense) => {
+    setCategory(expense.category);
+    setDescription(expense.description);
+    setAmount(expense.amount);
+    setDate(expense.date);
+    setEditMode(true);
+    setEditExpenseId(expense.id);
+  };
 
-      <form onSubmit={handleAddExpense}>
+  // Handle delete click
+  const handleDeleteClick = async (expenseId) => {
+     // Show a confirmation dialog
+  const confirmed = window.confirm("Are you sure you want to delete this expense?");
+  
+  if (confirmed) {
+    try {
+      // Proceed with deletion if user confirms
+      await axios.delete(`http://localhost:8090/expenses/${expenseId}`);
+
+      // Refresh the expense list after deletion
+      const response = await axios.get(
+        `http://localhost:8090/expenses?userId=${userId}`
+      );
+      setExpenses(response.data);
+    } catch (error) {
+      console.error("Error deleting expense", error);
+    }
+  } else {
+    // If the user cancels, do nothing
+    console.log("Delete action was canceled.");
+  }
+  };
+
+  useEffect(() => {
+    const getAllExpensesForSelectedMonth = async () => {
+        // Ensure the selected date is not empty
+        if (!date) {
+            console.error("No date selected");
+            return; // Exit if no date is selected
+        }
+
+        // Get the year and month from the selected date
+        const selectedDate = new Date(date); // Convert the selected date to a Date object
+        const year = selectedDate.getFullYear();
+        const month = String(selectedDate.getMonth() + 1).padStart(2, '0'); // Format month to always have two digits
+        const month_str = `${year}-${month}`; // Create the month string
+        try {
+            const response = await axios.get(
+                `http://localhost:8080/expenses/monthly?userId=${userId}&month=${month_str}`
+            );
+            
+            // Check the response structure
+            if (response.data) {
+                setMontlySpent(response.data); // Update monthly spent state
+            } else {
+                console.log("No data returned for this month.");
+                setMontlySpent(0); // Set to zero if no data
+            }
+        } catch (error) {
+            console.error("Error fetching expenses", error);
+        }
+    };
+
+    getAllExpensesForSelectedMonth(); // Call the function
+}, [date, userId]); // Dependencies to watch
+
+  return (
+      
+    <div className="container">
+      <div>
+      <h2>Money Spent this month: {montlySpent}</h2>
+      </div>
+
+      <h1>{editMode ? "Edit Expense" : "Add Expense"}</h1>
+
+      <form onSubmit={handleAddOrEditExpense}>
         <div>
           <label>Category:</label>
           <select
@@ -108,7 +188,9 @@ function ExpensePage() {
           >
             <option value="">Select a category</option>
             {categories.map((cat) => (
-              <option key={cat.id}>{cat}</option> // Adjust according to your category structure
+              <option key={cat.id} value={cat}>
+                {cat}
+              </option>
             ))}
           </select>
         </div>
@@ -142,7 +224,9 @@ function ExpensePage() {
           />
         </div>
 
-        <button type="submit">Add Expense</button>
+        <button type="submit">
+          {editMode ? "Save Changes" : "Add Expense"}
+        </button>
       </form>
 
       {/* Filter by Date */}
@@ -163,7 +247,9 @@ function ExpensePage() {
             <strong>Category:</strong> {expense.category} |{" "}
             <strong>Description:</strong> {expense.description} |{" "}
             <strong>Amount:</strong> {expense.amount} | <strong>Date:</strong>{" "}
-            {expense.date}
+            {expense.date}{" "}
+            <button onClick={() => handleEditClick(expense)}>Edit</button>
+            <button onClick={() => handleDeleteClick(expense.id)}>Delete</button>
           </li>
         ))}
       </ul>

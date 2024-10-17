@@ -43,7 +43,7 @@ function ExpensePage() {
     const fetchCategories = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:8080/enums/allCategories"
+          "http://localhost:8090/enums/allCategories"
         );
         setCategories(response.data);
       } catch (error) {
@@ -151,7 +151,7 @@ function ExpensePage() {
         const month_str = `${year}-${month}`; // Create the month string
         try {
             const response = await axios.get(
-                `http://localhost:8080/expenses/monthly?userId=${userId}&month=${month_str}`
+                `http://localhost:8090/expenses/monthly?userId=${userId}&month=${month_str}`
             );
             
             // Check the response structure

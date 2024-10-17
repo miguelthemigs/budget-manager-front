@@ -9,7 +9,8 @@ function NavBar() {
     const links = [
         { id: 1, path: "/", text: "Expense Tracker" },
         { id: 2, path: "/profile", text: "Profile" },     
-        { id: 3, path: "/demo", text: "Demo " },
+        { id: 3, path: "/overview", text: "Overview" },     
+        { id: 4, path: "/loan", text: "Loan Tracker " },
     ];
 
     const toggleNavbar = () => {
@@ -30,9 +31,7 @@ function NavBar() {
                             <li key={link.id}>
                                 <NavLink to={link.path}>
                                 {link.text}
-                                </NavLink>
-                                    
-                                
+                                </NavLink>                          
                             </li>
                         ))}
                     </ul>

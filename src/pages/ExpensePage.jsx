@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import "./ExpensePage.css"; // Import the CSS file
+import "./Pages.css"; // Import the CSS file
 
 function ExpensePage() {
   // State for form fields

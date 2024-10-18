@@ -11,6 +11,7 @@ function NavBar() {
         { id: 2, path: "/profile", text: "Profile" },     
         { id: 3, path: "/overview", text: "Overview" },     
         { id: 4, path: "/loan", text: "Loan Tracker " },
+        { id: 4, path: "/settings", text: "Settings" }, // can change currency, name, monthly budget, email
     ];
 
     const toggleNavbar = () => {

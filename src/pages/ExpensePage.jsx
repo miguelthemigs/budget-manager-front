@@ -8,10 +8,12 @@ function ExpensePage() {
   const [categories, setCategories] = useState([]);
   const [description, setDescription] = useState("");
   const [amount, setAmount] = useState("");
-  const [date, setDate] = useState("");
+  const [date, setDate] = useState(() => {
+    const today = new Date();
+    return today.toISOString().split("T")[0];
+  });
   const [editMode, setEditMode] = useState(false); // Edit mode state
   const [editExpenseId, setEditExpenseId] = useState(null); // ID of the expense being edited
-  const [montlySpent, setMontlySpent] = useState(0.0);
 
   // State for expenses and filter
   const [expenses, setExpenses] = useState([]);
@@ -19,9 +21,26 @@ function ExpensePage() {
     const now = new Date();
     return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
   });
+  const [user, setUser] = useState(null);
 
   const userId = 1; // Example userId, you can modify this
 
+  const [monthlySpending, setMonthlySpending] = useState({});
+
+  useEffect(() => {
+    // Fetch user data (you can replace the URL with your actual endpoint)
+    axios.get(`http://localhost:8090/user/${userId}`) // Adjust the endpoint as necessary
+        .then(response => {
+            setUser(response.data); // Assuming response.data contains user information
+        })
+        .catch(error => {
+            console.error("Error fetching user data:", error);
+        });
+}, []);
+
+useEffect(() => {
+    
+}, [user]); // Add dependencies as needed
   // Fetch expenses from the backend
   useEffect(() => {
     const fetchExpenses = async () => {
@@ -53,6 +72,25 @@ function ExpensePage() {
 
     fetchCategories();
   }, []);
+
+  // Fetch monthly spending for the selected month
+  useEffect(() => {
+    const fetchMonthlySpending = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:8090/expenses/monthly?userId=${userId}&month=${filterDate}`
+        );
+        setMonthlySpending((prev) => ({
+          ...prev,
+          [filterDate]: response.data || 0, // Store spending for the specific month
+        }));
+      } catch (error) {
+        console.error("Error fetching monthly spending", error);
+      }
+    };
+
+    fetchMonthlySpending();
+  }, [filterDate, userId]);
 
   // Filter expenses by the current month
   const filteredExpenses = expenses.filter((expense) => {
@@ -114,66 +152,28 @@ function ExpensePage() {
 
   // Handle delete click
   const handleDeleteClick = async (expenseId) => {
-     // Show a confirmation dialog
-  const confirmed = window.confirm("Are you sure you want to delete this expense?");
-  
-  if (confirmed) {
-    try {
-      // Proceed with deletion if user confirms
-      await axios.delete(`http://localhost:8090/expenses/${expenseId}`);
+    const confirmed = window.confirm("Are you sure you want to delete this expense?");
+    if (confirmed) {
+      try {
+        await axios.delete(`http://localhost:8090/expenses/${expenseId}`);
 
-      // Refresh the expense list after deletion
-      const response = await axios.get(
-        `http://localhost:8090/expenses?userId=${userId}`
-      );
-      setExpenses(response.data);
-    } catch (error) {
-      console.error("Error deleting expense", error);
+        // Refresh the expense list after deletion
+        const response = await axios.get(
+          `http://localhost:8090/expenses?userId=${userId}`
+        );
+        setExpenses(response.data);
+      } catch (error) {
+        console.error("Error deleting expense", error);
+      }
+    } else {
+      console.log("Delete action was canceled.");
     }
-  } else {
-    // If the user cancels, do nothing
-    console.log("Delete action was canceled.");
-  }
   };
 
-  useEffect(() => {
-    const getAllExpensesForSelectedMonth = async () => {
-        // Ensure the selected date is not empty
-        if (!date) {
-            console.error("No date selected");
-            return; // Exit if no date is selected
-        }
-
-        // Get the year and month from the selected date
-        const selectedDate = new Date(date); // Convert the selected date to a Date object
-        const year = selectedDate.getFullYear();
-        const month = String(selectedDate.getMonth() + 1).padStart(2, '0'); // Format month to always have two digits
-        const month_str = `${year}-${month}`; // Create the month string
-        try {
-            const response = await axios.get(
-                `http://localhost:8090/expenses/monthly?userId=${userId}&month=${month_str}`
-            );
-            
-            // Check the response structure
-            if (response.data) {
-                setMontlySpent(response.data); // Update monthly spent state
-            } else {
-                console.log("No data returned for this month.");
-                setMontlySpent(0); // Set to zero if no data
-            }
-        } catch (error) {
-            console.error("Error fetching expenses", error);
-        }
-    };
-
-    getAllExpensesForSelectedMonth(); // Call the function
-}, [date, userId]); // Dependencies to watch
-
   return (
-      
     <div className="container">
       <div>
-      <h2>Money Spent this month: {montlySpent}</h2>
+        <h2>Money Spent this month: {monthlySpending[filterDate] || 0}</h2>
       </div>
 
       <h1>{editMode ? "Edit Expense" : "Add Expense"}</h1>
@@ -246,7 +246,7 @@ function ExpensePage() {
           <li key={expense.id}>
             <strong>Category:</strong> {expense.category} |{" "}
             <strong>Description:</strong> {expense.description} |{" "}
-            <strong>Amount:</strong> {expense.amount} | <strong>Date:</strong>{" "}
+            <strong>Amount:</strong> {expense.amount} {user.preferredCurrency} | <strong>Date:</strong>{" "}
             {expense.date}{" "}
             <button onClick={() => handleEditClick(expense)}>Edit</button>
             <button onClick={() => handleDeleteClick(expense.id)}>Delete</button>

@@ -7,7 +7,8 @@
 
 /* Main container for the profile */
 .ProfilePage__container {
-    max-width: 600px;
+    width: 700px;
+    height: 500px;
     margin: 0 auto;
     background: #1e1e1e; /* Darker container background */
     padding: 30px;
@@ -83,3 +84,16 @@
         width: 100%; /* Full width button on small screens */
     }
 }
+
+.ProfilePage__settingsIcon {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    color: #ffffff; /* White color for the icon */
+    text-decoration: none; /* Remove underline from NavLink */
+}
+
+.ProfilePage__settingsIcon:hover {
+    color: #ccc; /* Change color on hover */
+}
+

@@ -9,6 +9,10 @@ function SettingsPage() {
     const [email, setEmail] = useState("");
     const [id, setId] = useState(null);
     const [categoryBudgets, setCategoryBudgets] = useState([]);
+    const [isModalOpen, setIsModalOpen] = useState(false); // Modal state
+    const [categories, setCategories] = useState([]); // Categories state
+    const [newCategory, setNewCategory] = useState(""); // New category input
+    const [newCategoryBudget, setNewCategoryBudget] = useState(""); // New category budget input
 
     const userId = 1; // Example userId, you can modify this
 
@@ -17,33 +21,44 @@ function SettingsPage() {
         axios.get(`http://localhost:8090/user/${userId}`)
             .then(response => {
                 const userData = response.data;
-                console.log(response.data);
                 setName(userData.name);
                 setCurrency(userData.preferredCurrency);
                 setMonthlyBudget(userData.monthlyBudget);
                 setEmail(userData.email);
                 setId(userData.id);
-
             })
             .catch(error => {
                 console.error("Error fetching user data:", error);
             });
-            
     }, []);
+
+     // Fetch categories from the backend
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:8090/enums/allCategories"
+        );
+        setCategories(response.data);
+      } catch (error) {
+        console.error("Error fetching categories", error);
+      }
+    };
+    fetchCategories();
+  }, []);
+
 
     const handleSave = async (event) => {
         event.preventDefault();
-    
+
         const updatedData = { 
             name, 
             preferredCurrency: currency,  
             monthlyBudget: parseFloat(monthlyBudget), 
             email,
         };
-    
+
         try {
-            console.log("Updated data:", updatedData);
-    
             const response = await axios.patch(`http://localhost:8090/user/${userId}`, updatedData, {
                 headers: {
                     'Content-Type': 'application/json', // Ensure JSON is sent
@@ -51,18 +66,27 @@ function SettingsPage() {
             });
     
             alert("User details updated successfully!");
-            
-    
+
         } catch (error) {
             console.error("Error updating user data:", error);
             alert("Error updating user data: " + error.message);
         }
     };
 
-
+    // Handle opening and closing of the modal
     const handleAddCategoryBudget = () => {
-        // Logic for adding new category budget (to be implemented)
-        console.log("Add Category Budget button clicked");
+        setIsModalOpen(true);
+    };
+
+    const handleCloseModal = () => {
+        setIsModalOpen(false);
+        setNewCategory(""); // Reset the form values
+        setNewCategoryBudget("");
+    };
+
+    const handleSaveCategoryBudget = () => {
+        setCategoryBudgets([...categoryBudgets, { category: newCategory, budget_amount: newCategoryBudget }]);
+        handleCloseModal(); // Close modal after adding the category
     };
 
     return (
@@ -70,7 +94,6 @@ function SettingsPage() {
             <h1 className="SettingsPage__heading">Settings</h1>
             <p>Update details:</p>
             <form className="SettingsPage__form" onSubmit={handleSave}>
-                
                 <div>
                     <label className="SettingsPage__label">Name</label>
                     <input
@@ -116,22 +139,25 @@ function SettingsPage() {
 
             <div className="SettingsPage__categorySection">
                 <h3>Category Budgets</h3>
-                {/* Add category budgets dynamically */}
                 {categoryBudgets.map((budget, index) => (
                     <div key={index}>
                         <label className="SettingsPage__label">Category {index + 1}</label>
                         <input
                             type="text"
                             className="SettingsPage__input"
-                            value={budget}
-                            onChange={(e) => {
-                                const newBudgets = [...categoryBudgets];
-                                newBudgets[index] = e.target.value;
-                                setCategoryBudgets(newBudgets);
-                            }}
+                            value={budget.category}
+                            readOnly
+                        />
+                        <label className="SettingsPage__label">Budget {index + 1}</label>
+                        <input
+                            type="text"
+                            className="SettingsPage__input"
+                            value={budget.budget_amount}
+                            readOnly
                         />
                     </div>
                 ))}
+
                 <button 
                     className="SettingsPage__categoryButton"
                     onClick={handleAddCategoryBudget}
@@ -139,6 +165,29 @@ function SettingsPage() {
                     Add Category Budget
                 </button>
             </div>
+
+            {/* Modal for adding category budget */}
+            {isModalOpen && (
+                <div className="modal-overlay">
+                    <div className="modal-content">
+                        <h3>Add New Category</h3>
+                        <input
+                            type="text"
+                            placeholder="Category Name"
+                            value={newCategory}
+                            onChange={(e) => setNewCategory(e.target.value)}
+                        />
+                        <input
+                            type="number"
+                            placeholder="Budget Value"
+                            value={newCategoryBudget}
+                            onChange={(e) => setNewCategoryBudget(e.target.value)}
+                        />
+                        <button onClick={handleSaveCategoryBudget}>Add Category</button>
+                        <button className="cancel-button" onClick={handleCloseModal}>Cancel</button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

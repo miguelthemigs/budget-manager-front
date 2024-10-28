@@ -6,6 +6,7 @@ import { Route, Routes, BrowserRouter as Router } from "react-router-dom";
 import ExpensePage from './pages/ExpensePage';
 import ProfilePage from './pages/ProfilePage';
 import SettingsPage from './pages/SettingsPage';
+import OverviewPage from './pages/OverviewPage';
 
 function App() {
     const [data, setData] = useState([]);
@@ -19,6 +20,7 @@ function App() {
           <Route path="/" element={<ExpensePage />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/settings" element={<SettingsPage />} />
+          <Route path="/overview" element={<OverviewPage/>} />
           </Routes>
           </Router>
             

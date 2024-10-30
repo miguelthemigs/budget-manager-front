@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./Pages.css"; // Import the CSS file
+import { FaTrash, FaEdit } from "react-icons/fa"; // Import the delete icon from Font Awesome
 
 function ExpensePage() {
   // State for form fields
@@ -162,8 +163,10 @@ useEffect(() => {
           `http://localhost:8090/expenses?userId=${userId}`
         );
         setExpenses(response.data);
+        alert("Expense deleted successfully!");
       } catch (error) {
         console.error("Error deleting expense", error);
+        alert("Error deleting expense: " + error.message);
       }
     } else {
       console.log("Delete action was canceled.");
@@ -248,8 +251,12 @@ useEffect(() => {
             <strong>Description:</strong> {expense.description} |{" "}
             <strong>Amount:</strong> {expense.amount} {user.preferredCurrency} | <strong>Date:</strong>{" "}
             {expense.date}{" "}
-            <button onClick={() => handleEditClick(expense)}>Edit</button>
-            <button onClick={() => handleDeleteClick(expense.id)}>Delete</button>
+            <button onClick={() => handleEditClick(expense)}>
+              <FaEdit />
+            </button>
+            <button onClick={() => handleDeleteClick(expense.id)}>
+              <FaTrash />
+            </button>
           </li>
         ))}
       </ul>

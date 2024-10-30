@@ -6,8 +6,32 @@ import "./ProfilePage.css"; // Import the CSS file
 
 function ProfilePage() {
     const [user, setUser] = useState(null);
+    const [monthlySpending, setMonthlySpending] = useState({});
+    const [filterDate, setFilterDate] = useState(() => {
+        const now = new Date();
+        return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+      });
 
-    let userId = 1; // Example userId, you can modify this
+    const userId = 1; // Example userId, you can modify this
+
+     // Fetch monthly spending for the selected month
+  useEffect(() => {
+    const fetchMonthlySpending = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:8090/expenses/monthly?userId=${userId}&month=${filterDate}`
+        );
+        setMonthlySpending((prev) => ({
+          ...prev,
+          [filterDate]: response.data || 0, // Store spending for the specific month
+        }));
+      } catch (error) {
+        console.error("Error fetching monthly spending", error);
+      }
+    };
+
+    fetchMonthlySpending();
+  }, [filterDate, userId]);
 
     useEffect(() => {
         axios.get(`http://localhost:8090/user/${userId}`) 
@@ -39,7 +63,9 @@ function ProfilePage() {
                         <h3 className="ProfilePage__statsHeading">Spending Statistics</h3>
                         <p className="ProfilePage__statsPlaceholder">Graph or statistics will go here.</p>
                         <p className="ProfilePage__subheading"> Monthly Budget: {user.monthlyBudget} {user.preferredCurrency} </p>
-                        {/* Placeholder for future graph/statistics component */}
+                        <h4 className="ProfilePage__subheading"> Percentage of budget spent: {((monthlySpending[filterDate] || 0) % user.monthlyBudget) / 100}% ({(monthlySpending[filterDate] || 0) }  {user.preferredCurrency})</h4>
+                        <h3 className="ProfilePage__heading"> Left to spend this month: {user.monthlyBudget - (monthlySpending[filterDate] || 0)} {user.preferredCurrency} </h3>
+                        
                     </div>
                 </div>
             ) : (

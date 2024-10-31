@@ -58,7 +58,7 @@ function SettingsPage() {
     };
   
     fetchCategoryBudgets();
-  }, [userId], [userCategoryBudgets]); 
+  }, []); 
   
 
   useEffect(() => {
@@ -138,8 +138,8 @@ function SettingsPage() {
     if (confirmed) {
       try {
         await axios.delete(`http://localhost:8090/category-budgets/${categoryBudgetId}`);
-        const response = await axios.get(`http://localhost:8090/category-budgets/user/${userId}`);
-        setCategoryBudgets(response.data);
+        // Update the list of budgets after deletion
+        setUserCategoryBudgets(userCategoryBudgets.filter(budget => budget.id !== categoryBudgetId));
         alert("Category budget deleted successfully!");
       } catch (error) {
         console.error("Error deleting category budget:", error);

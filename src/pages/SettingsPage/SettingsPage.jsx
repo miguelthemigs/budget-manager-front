@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import "./SettingsPage.css";
-import UserDetailsForm from "C:\\Users\\migro\\Desktop\\Fontys\\s3-projects\\budget-app-front\\src\\components\\UserDetailsForm.jsx";
-import CategoryBudgetList from "C:\\Users\\migro\\Desktop\\Fontys\\s3-projects\\budget-app-front\\src\\components\\CategoryBudgetList.jsx";
-import CategoryBudgetModal from "C:\\Users\\migro\\Desktop\\Fontys\\s3-projects\\budget-app-front\\src\\components\\CategoryBudgetModal.jsx";
+import CategoryBudgetList from '../../components/Settings/CategoryBudgetList.jsx';
+import CategoryBudgetModal from '../../components/Settings/CategoryBudgetModal.jsx';
+import UserDetailsForm from '../../components/Settings/UserDetailsForm.jsx';
 import axios from 'axios';
 
 function SettingsPage({
@@ -135,7 +135,7 @@ function SettingsPage({
         email={email}
         setEmail={setEmail}
         currencies={currencies}
-        onSave={handleSave} // Pass the updated handleSave function
+        onSave={handleSave} 
       />
 
       <CategoryBudgetList

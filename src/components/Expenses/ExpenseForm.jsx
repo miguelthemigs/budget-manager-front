@@ -1,4 +1,3 @@
-// components/ExpenseForm.jsx
 import React, { useState, useEffect } from "react";
 
 function ExpenseForm({ onSubmit, editMode, categories, expense, userCurrency }) {
@@ -22,30 +21,56 @@ function ExpenseForm({ onSubmit, editMode, categories, expense, userCurrency }) 
     };
 
     return (
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="expense-form">
             <h1>{editMode ? "Edit Expense" : "Add Expense"}</h1>
             <div>
-                <label>Category:</label>
-                <select value={category} onChange={(e) => setCategory(e.target.value)} required>
+                <label className="expense-label">Category:</label>
+                <select
+                    value={category}
+                    onChange={(e) => setCategory(e.target.value)}
+                    required
+                    className="expense-input"
+                >
                     <option value="">Select a category</option>
                     {categories.map((cat) => (
-                        <option key={cat} value={cat}>{cat}</option>
+                        <option key={cat} value={cat}>
+                            {cat}
+                        </option>
                     ))}
                 </select>
             </div>
             <div>
-                <label>Description:</label>
-                <input type="text" value={description} onChange={(e) => setDescription(e.target.value)} />
+                <label className="expense-label">Description:</label>
+                <input
+                    type="text"
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    className="expense-input"
+                />
             </div>
             <div>
-                <label>Amount:</label>
-                <input type="number" value={amount} onChange={(e) => setAmount(e.target.value)} required />
+                <label className="expense-label">Amount:</label>
+                <input
+                    type="number"
+                    value={amount}
+                    onChange={(e) => setAmount(e.target.value)}
+                    required
+                    className="expense-input"
+                />
             </div>
             <div>
-                <label>Date:</label>
-                <input type="date" value={date} onChange={(e) => setDate(e.target.value)} required />
+                <label className="expense-label">Date:</label>
+                <input
+                    type="date"
+                    value={date}
+                    onChange={(e) => setDate(e.target.value)}
+                    required
+                    className="expense-input"
+                />
             </div>
-            <button type="submit">{editMode ? "Save Changes" : "Add Expense"}</button>
+            <button type="submit" className="expense-button">
+                {editMode ? "Save Changes" : "Add Expense"}
+            </button>
         </form>
     );
 }

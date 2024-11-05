@@ -122,7 +122,7 @@ function SettingsPage({
 };
 
   return (
-    <div className="SettingsPage__container">
+    <div>
       <h1 className="SettingsPage__heading">Settings</h1>
       <p>Update details:</p>
       <UserDetailsForm

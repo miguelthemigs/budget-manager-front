@@ -55,7 +55,6 @@ function ExpensePage({ user, categories, expenses, setExpenses }) {
     return expenseYearMonth === filterDate;
   });
 
-  // Handle form submission to add or edit an expense
   const handleAddOrEditExpense = async (newExpense) => {
     try {
       const expenseData = {
@@ -97,7 +96,6 @@ function ExpensePage({ user, categories, expenses, setExpenses }) {
     }
   };
 
-  // Handle edit click
   const handleEditClick = (expense) => {
     setCategory(expense.category);
     setDescription(expense.description);
@@ -107,7 +105,6 @@ function ExpensePage({ user, categories, expenses, setExpenses }) {
     setEditExpenseId(expense.id);
   };
 
-  // Handle delete click
   const handleDeleteClick = async (expenseId) => {
     const confirmed = window.confirm("Are you sure you want to delete this expense?");
     if (confirmed) {
@@ -135,7 +132,7 @@ function ExpensePage({ user, categories, expenses, setExpenses }) {
   : { category: "", description: "", amount: "", date: new Date().toISOString().split("T")[0] }; // Default values
 
   return (
-    <div className="container">
+    <div>
       <MonthlySpending spending={monthlySpending[filterDate]} />
       <ExpenseForm
         onSubmit={handleAddOrEditExpense}

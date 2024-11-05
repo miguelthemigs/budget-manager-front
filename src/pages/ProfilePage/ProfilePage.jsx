@@ -48,7 +48,7 @@ function ProfilePage() {
     };
 
     return (
-        <div className="ProfilePage__container">
+        <div>
             <NavLink to="/settings" className="ProfilePage__settingsIcon">
                 <FiSettings size={24} /> 
             </NavLink>

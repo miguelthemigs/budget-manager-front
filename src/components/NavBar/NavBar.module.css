@@ -1,0 +1,105 @@
+/* NavBar.module.css */
+
+.header {
+  width: 100%;
+  background-color: #1a1a1a; /* Dark background color */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 2rem;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 10;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5); /* Subtle shadow for depth */
+}
+
+.navBar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.menuNav {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.menuNav li {
+  margin-left: 1.5rem;
+}
+
+a {
+  text-decoration: none;
+  color: #b3b3b3; /* Lighter gray for link color */
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  transition: color 0.3s, background-color 0.3s; /* Smooth hover transition */
+}
+
+a:hover {
+  color: #ffffff; /* White on hover */
+  background-color: #333333; /* Darker background for hover effect */
+}
+
+.active {
+  color: #ffffff;
+  background-color: #333333;
+}
+
+.toggleButton {
+  display: none; /* Hidden by default on larger screens */
+}
+
+.bar {
+  width: 30px;
+  height: 3px;
+  background-color: #b3b3b3; /* Subtle gray color for hamburger bars */
+  margin: 5px 0;
+  transition: 0.4s;
+}
+
+/* Mobile Styles */
+@media (max-width: 768px) {
+  .navBar {
+    display: none; /* Hidden by default */
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .open {
+    display: flex; /* Display navbar when open */
+  }
+
+  .toggleButton {
+    display: block; /* Show on mobile */
+    cursor: pointer;
+  }
+
+  .menuNav {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .menuNav li {
+    margin: 1rem 0;
+    text-align: center;
+  }
+  .header {
+    width: 100%;
+    background-color: #1a1a1a;
+    height: 60px; /* Fixed height */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2rem;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 10;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+  }
+}

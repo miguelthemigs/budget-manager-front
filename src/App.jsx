@@ -15,29 +15,25 @@ function App() {
   const [currencies, setCurrencies] = useState([]);
   const [expenses, setExpenses] = useState([]);
   const userId = 1; // Assuming a fixed user ID for now
-
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+  
+  
   useEffect(() => {
     // Fetch User Data
     axios
-      .get(`http://localhost:8090/user/${userId}`)
+      .get(`${API_BASE_URL}/user/${userId}`)
       .then((response) => setUserData(response.data))
       .catch((error) => console.error("Error fetching user data:", error));
-
-    // Fetch Expenses
-    axios
-      .get(`http://localhost:8090/expenses?userId=${userId}`)
-      .then((response) => setExpenses(response.data))
-      .catch((error) => console.error("Error fetching expenses", error));
-
+      
     // Fetch Categories
     axios
-      .get("http://localhost:8090/enums/allCategories")
+      .get(`${API_BASE_URL}/enums/allCategories`)
       .then((response) => setCategories(response.data))
       .catch((error) => console.error("Error fetching categories", error));
 
     // Fetch User Category Budgets
     axios
-      .get(`http://localhost:8090/category-budgets/user/${userId}`)
+      .get(`${API_BASE_URL}/category-budgets/user/${userId}`)
       .then((response) => setUserCategoryBudgets(response.data))
       .catch((error) =>
         console.error("Error fetching category budgets", error)
@@ -45,7 +41,7 @@ function App() {
 
     // Fetch Currencies
     axios
-      .get("http://localhost:8090/enums/allCurrencies")
+      .get(`${API_BASE_URL}/enums/allCurrencies`)
       .then((response) => setCurrencies(response.data))
       .catch((error) => console.error("Error fetching currencies", error));
   }, [userId]);
@@ -57,7 +53,7 @@ function App() {
         <Routes>
           <Route
             path="/"
-            element={<ExpensePage user={userData} categories={categories} expenses={expenses} setExpenses={setExpenses}/>}
+            element={<ExpensePage user={userData} categories={categories}/>}
           />
           <Route path="/profile" element={<ProfilePage />} />
           <Route

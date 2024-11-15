@@ -12,6 +12,7 @@ function SettingsPage({
   userCategoryBudgets,
   setUserCategoryBudgets
 }) {
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   const [name, setName] = useState(userData?.name || "");
   const [currency, setCurrency] = useState(userData?.preferredCurrency || "");
   const [monthlyBudget, setMonthlyBudget] = useState(userData?.monthlyBudget || "");
@@ -40,7 +41,7 @@ function SettingsPage({
     };
 
     try {
-      await axios.patch(`http://localhost:8090/user/${userData.id}`, updatedData, {
+      await axios.patch(`${API_BASE_URL}/user/${userData.id}`, updatedData, {
         headers: { "Content-Type": "application/json" },
       });
       alert("User details updated successfully!");
@@ -74,7 +75,7 @@ function SettingsPage({
     try {
         if (editingBudgetId) {
             // Update existing budget
-            await axios.put(`http://localhost:8090/category-budgets/${editingBudgetId}`, newBudget);
+            await axios.put(`${API_BASE_URL}/category-budgets/${editingBudgetId}`, newBudget);
             // Update the budget in the state
             setUserCategoryBudgets(prevBudgets => 
                 prevBudgets.map(budget => 
@@ -84,13 +85,13 @@ function SettingsPage({
             alert("Category budget updated successfully!");
         } else {
             // Create new budget
-            const response = await axios.post("http://localhost:8090/category-budgets", newBudget);
+            const response = await axios.post(`${API_BASE_URL}/category-budgets`, newBudget);
             setUserCategoryBudgets([...userCategoryBudgets, response.data]); // Optimistic update
             alert("Category budget added successfully!");
         }
     } catch (error) {
         console.error("Error saving category budget:", error);
-        alert("Error saving category budget: " + error.message);
+        alert("Error saving category budget: there is already a budget for this category");
     }
 
     handleCloseModal();
@@ -108,7 +109,7 @@ function SettingsPage({
     if (confirmed) {
         try {
             // Make the API call to delete the category budget
-            await axios.delete(`http://localhost:8090/category-budgets/${categoryBudgetId}`);
+            await axios.delete(`${API_BASE_URL}/category-budgets/${categoryBudgetId}`);
             // Update the state to remove the deleted category budget
             setUserCategoryBudgets(prevBudgets => 
                 prevBudgets.filter(budget => budget.id !== categoryBudgetId)

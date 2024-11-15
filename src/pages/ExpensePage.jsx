@@ -7,7 +7,8 @@ import ExpenseForm from '../components/Expenses/ExpenseForm';
 import ExpenseFilter from '../components/Expenses/ExpenseFilter';
 import ExpenseList from '../components/Expenses/ExpenseList';
 
-function ExpensePage({ user, categories, expenses, setExpenses }) {
+function ExpensePage({ user, categories }) {
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   // State for form fields
   const [category, setCategory] = useState("");
   const [description, setDescription] = useState("");
@@ -21,7 +22,8 @@ function ExpensePage({ user, categories, expenses, setExpenses }) {
 
   const userId = 1; // Example userId, you can modify this
 
-  // Fetch monthly spending for the selected month
+  // State to manage expenses
+  const [expenses, setExpenses] = useState([]);
   const [monthlySpending, setMonthlySpending] = useState({});
   const [filterDate, setFilterDate] = useState(() => {
     const now = new Date();
@@ -32,7 +34,7 @@ function ExpensePage({ user, categories, expenses, setExpenses }) {
     const fetchMonthlySpending = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8090/expenses/monthly?userId=${userId}&month=${filterDate}`
+          `${API_BASE_URL}/expenses/monthly?userId=${userId}&month=${filterDate}`
         );
         setMonthlySpending((prev) => ({
           ...prev,
@@ -44,6 +46,21 @@ function ExpensePage({ user, categories, expenses, setExpenses }) {
     };
 
     fetchMonthlySpending();
+  }, [filterDate, userId]);
+
+  useEffect(() => {
+    const fetchMonthlyExpenses = async () => {
+      try {
+        const response = await axios.get(
+          `${API_BASE_URL}/expenses/perMonth?userId=${userId}&month=${filterDate.split("-")[1]}&year=${filterDate.split("-")[0]}`
+        );
+        setExpenses(response.data);
+      } catch (error) {
+        console.error("Error fetching monthly expenses", error);
+      }
+    };
+
+    fetchMonthlyExpenses();
   }, [filterDate, userId]);
 
   // Filter expenses by the current month
@@ -69,15 +86,15 @@ function ExpensePage({ user, categories, expenses, setExpenses }) {
       console.log("Expense Data to be sent:", expenseData); // Log the data
       if (editMode) {
         // Send a PUT request to update the expense
-        await axios.put(`http://localhost:8090/expenses/${editExpenseId}`, expenseData);
+        await axios.put(`${API_BASE_URL}/expenses/${editExpenseId}`, expenseData);
       } else {
         // Send a POST request to add a new expense
-        await axios.post("http://localhost:8090/expenses", expenseData);
+        await axios.post(`${API_BASE_URL}/expenses`, expenseData);
       }
 
       // Refresh the expense list after adding or editing
       const response = await axios.get(
-        `http://localhost:8090/expenses?userId=${userId}`
+        `${API_BASE_URL}/expenses?userId=${userId}`
       );
       setExpenses(response.data);
 
@@ -109,11 +126,11 @@ function ExpensePage({ user, categories, expenses, setExpenses }) {
     const confirmed = window.confirm("Are you sure you want to delete this expense?");
     if (confirmed) {
       try {
-        await axios.delete(`http://localhost:8090/expenses/${expenseId}`);
+        await axios.delete(`${API_BASE_URL}/expenses/${expenseId}`);
 
         // Refresh the expense list after deletion
         const response = await axios.get(
-          `http://localhost:8090/expenses?userId=${userId}`
+          `${API_BASE_URL}/expenses?userId=${userId}`
         );
         setExpenses(response.data);
         alert("Expense deleted successfully!");
@@ -128,8 +145,8 @@ function ExpensePage({ user, categories, expenses, setExpenses }) {
 
   // Prepare the current expense data for the form
   const currentExpense = editMode
-  ? { category, description, amount, date }
-  : { category: "", description: "", amount: "", date: new Date().toISOString().split("T")[0] }; // Default values
+    ? { category, description, amount, date }
+    : { category: "", description: "", amount: "", date: new Date().toISOString().split("T")[0] }; // Default values
 
   return (
     <div>

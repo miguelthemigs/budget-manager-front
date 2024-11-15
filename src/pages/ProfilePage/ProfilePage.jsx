@@ -5,6 +5,7 @@ import { FiSettings } from 'react-icons/fi'; // Import the settings icon from re
 import "./ProfilePage.css"; // Import the CSS file
 
 function ProfilePage() {
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
     const [user, setUser] = useState(null);
     const [monthlySpending, setMonthlySpending] = useState({});
     const [filterDate, setFilterDate] = useState(() => {
@@ -19,7 +20,7 @@ function ProfilePage() {
     const fetchMonthlySpending = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8090/expenses/monthly?userId=${userId}&month=${filterDate}`
+          `${API_BASE_URL}/expenses/monthly?userId=${userId}&month=${filterDate}`
         );
         setMonthlySpending((prev) => ({
           ...prev,
@@ -34,7 +35,7 @@ function ProfilePage() {
   }, [filterDate, userId]);
 
     useEffect(() => {
-        axios.get(`http://localhost:8090/user/${userId}`) 
+        axios.get(`${API_BASE_URL}/user/${userId}`) 
             .then(response => {
                 setUser(response.data); 
             })

@@ -7,31 +7,29 @@ import ExpensePage from "./pages/ExpensePage";
 import ProfilePage from "./pages/ProfilePage/ProfilePage.jsx";
 import SettingsPage from "./pages/SettingsPage/SettingsPage.jsx";
 import OverviewPage from "./pages/OverviewPage";
+import LoginPage from "./pages/Auth/LoginPage";
+import RegistrationPage from "./pages/Auth/RegistrationPage";
+import ProtectedRoute from "./components/Auth/ProtectedRoute";
 
 function App() {
   const [userData, setUserData] = useState(null);
   const [categories, setCategories] = useState([]);
   const [userCategoryBudgets, setUserCategoryBudgets] = useState([]);
   const [currencies, setCurrencies] = useState([]);
-  const [expenses, setExpenses] = useState([]);
   const userId = 1; // Assuming a fixed user ID for now
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-  
-  
+
   useEffect(() => {
-    // Fetch User Data
     axios
       .get(`${API_BASE_URL}/user/${userId}`)
       .then((response) => setUserData(response.data))
       .catch((error) => console.error("Error fetching user data:", error));
-      
-    // Fetch Categories
+
     axios
       .get(`${API_BASE_URL}/enums/allCategories`)
       .then((response) => setCategories(response.data))
       .catch((error) => console.error("Error fetching categories", error));
 
-    // Fetch User Category Budgets
     axios
       .get(`${API_BASE_URL}/category-budgets/user/${userId}`)
       .then((response) => setUserCategoryBudgets(response.data))
@@ -39,7 +37,6 @@ function App() {
         console.error("Error fetching category budgets", error)
       );
 
-    // Fetch Currencies
     axios
       .get(`${API_BASE_URL}/enums/allCurrencies`)
       .then((response) => setCurrencies(response.data))
@@ -51,24 +48,51 @@ function App() {
       <Router>
         <NavBar />
         <Routes>
+          {/* Unprotected routes */}
+          <Route
+            path="/login"
+            element={<LoginPage onLogin={(data) => console.log(data)} />}
+          />
+          <Route
+            path="/register"
+            element={<RegistrationPage onRegister={(data) => console.log(data)} />}
+          />
+          
+          {/* Protected routes */}
           <Route
             path="/"
-            element={<ExpensePage user={userData} categories={categories}/>}
+            element={<ProtectedRoute element={() => <ExpensePage user={userData} categories={categories} />} />}
           />
-          <Route path="/profile" element={<ProfilePage />} />
+          <Route
+            path="/profile"
+            element={<ProtectedRoute element={ProfilePage} />}
+          />
           <Route
             path="/settings"
             element={
-              <SettingsPage
-                userData={userData}
-                categories={categories}
-                userCategoryBudgets={userCategoryBudgets}
-                currencies={currencies}
-                setUserCategoryBudgets={setUserCategoryBudgets}
+              <ProtectedRoute
+                element={() => (
+                  <SettingsPage
+                    userData={userData}
+                    categories={categories}
+                    userCategoryBudgets={userCategoryBudgets}
+                    currencies={currencies}
+                    setUserCategoryBudgets={setUserCategoryBudgets}
+                  />
+                )}
+                roles={["USER", "ADMIN"]}
               />
             }
           />
-          <Route path="/overview" element={<OverviewPage />} />
+          <Route
+            path="/overview"
+            element={
+              <ProtectedRoute
+                element={OverviewPage}
+                roles={["ADMIN"]}
+              />
+            }
+          />
         </Routes>
       </Router>
     </div>

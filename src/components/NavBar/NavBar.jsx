@@ -10,6 +10,8 @@ function NavBar() {
         { id: 2, path: "/profile", text: "Profile" },     
         { id: 3, path: "/overview", text: "Overview" },     
         { id: 4, path: "/loan", text: "Loan Tracker" },
+        { id: 5, path: "/login", text: "Login" },
+        { id: 6, path: "/register", text: "Register" },
     ];
 
     const toggleNavbar = () => {

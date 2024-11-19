@@ -11,6 +11,7 @@ import LoginPage from "./pages/Auth/LoginPage";
 import RegistrationPage from "./pages/Auth/RegistrationPage";
 import ProtectedRoute from "./components/Auth/ProtectedRoute";
 import TokenManager from "./services/TokenManager";
+import AuthAPI from './services/AuthAPI';
 
 function App() {
   const [userData, setUserData] = useState(null);
@@ -44,6 +45,30 @@ function App() {
   //     .then((response) => setCurrencies(response.data))
   //     .catch((error) => console.error("Error fetching currencies", error));
   // }, [userId]);
+ // Rehydrate user data and authentication state on app load
+ 
+ useEffect(() => {
+  const rehydrateUser = async () => {
+    try {
+      if (TokenManager.getAccessToken() && !TokenManager.isTokenExpired()) {
+        // Decode claims to extract user ID
+        const userId = TokenManager.getUserId();
+
+        // Optionally fetch the user data
+        const user = await AuthAPI.fetchCurrentUser(userId);
+        setUserData(user);
+        setIsAuthenticated(true);
+      } else {
+        TokenManager.clear();
+      }
+    } catch (error) {
+      console.error("Failed to rehydrate user data:", error);
+      TokenManager.clear();
+    }
+  };
+
+  rehydrateUser();
+}, []);
 
   const handleLogin = async (user) => {
   setIsAuthenticated(true);

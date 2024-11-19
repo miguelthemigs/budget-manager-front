@@ -44,6 +44,9 @@ const AuthAPI = {
     }
   },
 
+  isAuthenticated: () => !!TokenManager.getAccessToken(),
+
+
   logout: () => {
     TokenManager.clear(); // Clear the token and claims from sessionStorage
   }

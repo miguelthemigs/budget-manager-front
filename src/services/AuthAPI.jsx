@@ -1,5 +1,6 @@
 import axios from "axios";
 import TokenManager from "./TokenManager";
+const userId = TokenManager.getUserId(); 
 
 const AuthAPI = {
   login: async (email, password) => {
@@ -26,6 +27,19 @@ const AuthAPI = {
       return response.data;
     } catch (error) {
       console.error("Registration failed", error);
+      throw error;
+    }
+  },
+
+  fetchCurrentUser: async () => {
+    try {
+      const token = TokenManager.getAccessToken();
+      if (!token) throw new Error("No access token found.");
+
+      const response = await axios.get(`http://localhost:8080/user/${userId}`);
+      return response.data;
+    } catch (error) {
+      console.error("Failed to fetch current user", error);
       throw error;
     }
   },

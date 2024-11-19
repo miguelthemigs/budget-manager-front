@@ -4,6 +4,7 @@ import CategoryBudgetList from '../../components/Settings/CategoryBudgetList.jsx
 import CategoryBudgetModal from '../../components/Settings/CategoryBudgetModal.jsx';
 import UserDetailsForm from '../../components/Settings/UserDetailsForm.jsx';
 import axios from 'axios';
+import TokenManager from '../../services/TokenManager';
 
 function SettingsPage({
   userData,
@@ -21,6 +22,7 @@ function SettingsPage({
   const [newCategory, setNewCategory] = useState("");
   const [newCategoryBudget, setNewCategoryBudget] = useState("");
   const [editingBudgetId, setEditingBudgetId] = useState(null);
+  const userId = TokenManager.getUserId(); 
 
   useEffect(() => {
     if (userData) {
@@ -41,7 +43,7 @@ function SettingsPage({
     };
 
     try {
-      await axios.patch(`${API_BASE_URL}/user/${userData.id}`, updatedData, {
+      await axios.patch(`${API_BASE_URL}/user/${userId}`, updatedData, {
         headers: { "Content-Type": "application/json" },
       });
       alert("User details updated successfully!");
@@ -69,7 +71,8 @@ function SettingsPage({
         id: editingBudgetId,
         category: newCategory,
         budget_amount: parseFloat(newCategoryBudget),
-        user_id: userData?.id, // Use userData?.id to get the user ID
+        //user_id: userData?.id, // Use userData?.id to get the user ID
+        user_id: userId, 
     };
 
     try {

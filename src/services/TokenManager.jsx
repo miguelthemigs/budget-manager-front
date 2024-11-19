@@ -11,12 +11,18 @@ const TokenManager = {
             const claims = jwtDecode(token);
             sessionStorage.setItem("accessToken", token);
             sessionStorage.setItem("claims", JSON.stringify(claims));
+            console.log("Token set", claims);
             return claims;
+            
         } catch (error) {
             console.error("Invalid token", error);
             TokenManager.clear();
             return undefined;
         }
+    },
+    getUserId: () => {
+        const claims = TokenManager.getClaims();
+        return claims?.userId || null; 
     },
     isTokenExpired: () => {
         const claims = TokenManager.getClaims();

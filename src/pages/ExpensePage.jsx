@@ -6,9 +6,11 @@ import MonthlySpending from '../components/Expenses/MonthlySpending';
 import ExpenseForm from '../components/Expenses/ExpenseForm';
 import ExpenseFilter from '../components/Expenses/ExpenseFilter';
 import ExpenseList from '../components/Expenses/ExpenseList';
+import TokenManager from "../services/TokenManager";
 
 function ExpensePage({ user, categories }) {
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+  const userId = TokenManager.getUserId(); 
   // State for form fields
   const [category, setCategory] = useState("");
   const [description, setDescription] = useState("");
@@ -19,8 +21,6 @@ function ExpensePage({ user, categories }) {
   });
   const [editMode, setEditMode] = useState(false); // Edit mode state
   const [editExpenseId, setEditExpenseId] = useState(null); // ID of the expense being edited
-
-  const userId = 1; // Example userId, you can modify this
 
   // State to manage expenses
   const [expenses, setExpenses] = useState([]);

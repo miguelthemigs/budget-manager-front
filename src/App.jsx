@@ -10,13 +10,15 @@ import OverviewPage from "./pages/OverviewPage";
 import LoginPage from "./pages/Auth/LoginPage";
 import RegistrationPage from "./pages/Auth/RegistrationPage";
 import ProtectedRoute from "./components/Auth/ProtectedRoute";
+import TokenManager from "./services/TokenManager";
 
 function App() {
   const [userData, setUserData] = useState(null);
   const [categories, setCategories] = useState([]);
   const [userCategoryBudgets, setUserCategoryBudgets] = useState([]);
   const [currencies, setCurrencies] = useState([]);
-  const userId = 1; // Assuming a fixed user ID for now
+  const userId = TokenManager.getUserId(); 
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
   // useEffect(() => {
@@ -52,11 +54,13 @@ function App() {
     const categoriesResponse = await axios.get(`${API_BASE_URL}/enums/allCategories`);
     setCategories(categoriesResponse.data);
 
-    const budgetsResponse = await axios.get(`${API_BASE_URL}/category-budgets/user/${user.id}`);
+    const budgetsResponse = await axios.get(`${API_BASE_URL}/category-budgets/user/${userId}`);
     setUserCategoryBudgets(budgetsResponse.data);
 
     const currenciesResponse = await axios.get(`${API_BASE_URL}/enums/allCurrencies`);
     setCurrencies(currenciesResponse.data);
+
+    
   } catch (error) {
     console.error("Error fetching data after login", error);
   }
@@ -66,12 +70,17 @@ function App() {
   return (
     <div className="App">
       <Router>
-        <NavBar />
+        
+          {/* <NavBar /> */}
+          {isAuthenticated && <NavBar />}
+        
+      
         <Routes>
           {/* Unprotected routes */}
+          
           <Route
             path="/login"
-            element={<LoginPage onLogin={(data) => console.log(data)} />}
+            element={<LoginPage onLogin={handleLogin} />}
           />
           <Route
             path="/register"

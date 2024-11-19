@@ -16,7 +16,9 @@ function LoginForm(props) {
     AuthAPI.login(email, password)
       .then((accessToken) => {
         console.log('Logged in successfully, token:', accessToken);
-        // Redirect to a specific page after login
+        const user = AuthAPI.fetchCurrentUser(); // Example function to decode token
+        props.onLogin(user); 
+        
         navigate('/'); // Replace '/dashboard' with your desired route
       })
       .catch((error) => {

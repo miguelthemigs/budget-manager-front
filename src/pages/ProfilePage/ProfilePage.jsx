@@ -3,6 +3,7 @@ import axios from "axios";
 import { NavLink } from "react-router-dom"; // Use NavLink for navigation
 import { FiSettings } from 'react-icons/fi'; // Import the settings icon from react-icons
 import "./ProfilePage.css"; // Import the CSS file
+import TokenManager from "../../services/TokenManager";
 
 function ProfilePage() {
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -13,7 +14,7 @@ function ProfilePage() {
         return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
       });
 
-    const userId = 1; // Example userId, you can modify this
+      const userId = TokenManager.getUserId(); 
 
      // Fetch monthly spending for the selected month
   useEffect(() => {

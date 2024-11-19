@@ -26,74 +26,73 @@ function RegistrationForm(props) {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-
+  
     if (emailError) {
       alert('Please fix the email error before submitting.');
       return;
     }
-
+  
     if (password !== repeatedPassword) {
       setRegistrationError('Passwords do not match');
       return;
     }
-
+  
     const registrationData = {
       name: username,
       email,
       password,
       repeatedPassword,
     };
-
+  
     try {
-      // Call the AuthAPI.register method to register the user
       const registrationResponse = await AuthAPI.register(registrationData);
       console.log('Registration successful:', registrationResponse);
-
-      // After successful registration, log the user in
+  
+      // Redirect to login or home page after successful registration
       const loginResponse = await AuthAPI.login(email, password);
-      navigate("/"); 
-
-      console.log('Registration and login successful:', loginResponse);
-      
-
+      navigate("/"); // Adjust route as needed
     } catch (error) {
-      console.error('Registration or login failed', error);
-      console.log(registrationData);
-      console.log();
-      setRegistrationError('Registration or login failed. Please try again.');
+      if (error.response && error.response.data) {
+        // Display the error message from the backend
+        setRegistrationError(error.response.data);
+      } else {
+        setRegistrationError('An unexpected error occurred. Please try again.');
+      }
     }
   };
+  
 
   return (
     <form onSubmit={handleSubmit}>
-      <input
-        type="text"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-        placeholder="Name"
-      />
-      <input
-        type="email"
-        value={email}
-        onChange={handleEmailChange}
-        placeholder="Email"
-      />
-      {emailError && <p style={{ color: 'red' }}>{emailError}</p>}
-      <input
-        type="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        placeholder="Password"
-      />
-      <input
-        type="password"
-        value={repeatedPassword}
-        onChange={(e) => setRepeatedPassword(e.target.value)}
-        placeholder="Repeat your password"
-      />
-      {registrationError && <p style={{ color: 'red' }}>{registrationError}</p>}
-      <button type="submit">Register</button>
-    </form>
+  <input
+    type="text"
+    value={username}
+    onChange={(e) => setUsername(e.target.value)}
+    placeholder="Name"
+  />
+  <input
+    type="email"
+    value={email}
+    onChange={handleEmailChange}
+    placeholder="Email"
+  />
+  {emailError && <p style={{ color: 'red' }}>{emailError}</p>}
+  <input
+    type="password"
+    value={password}
+    onChange={(e) => setPassword(e.target.value)}
+    placeholder="Password"
+  />
+  <input
+    type="password"
+    value={repeatedPassword}
+    onChange={(e) => setRepeatedPassword(e.target.value)}
+    placeholder="Repeat your password"
+  />
+  {registrationError && <p style={{ color: 'red' }}>{registrationError}</p>}
+  <button type="submit">Register</button>
+</form>
+
   );
 }
 

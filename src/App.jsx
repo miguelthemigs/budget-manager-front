@@ -19,29 +19,49 @@ function App() {
   const userId = 1; // Assuming a fixed user ID for now
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-  useEffect(() => {
-    axios
-      .get(`${API_BASE_URL}/user/${userId}`)
-      .then((response) => setUserData(response.data))
-      .catch((error) => console.error("Error fetching user data:", error));
+  // useEffect(() => {
+  //   axios
+  //     .get(`${API_BASE_URL}/user/${userId}`)
+  //     .then((response) => setUserData(response.data))
+  //     .catch((error) => console.error("Error fetching user data:", error));
 
-    axios
-      .get(`${API_BASE_URL}/enums/allCategories`)
-      .then((response) => setCategories(response.data))
-      .catch((error) => console.error("Error fetching categories", error));
+  //   axios
+  //     .get(`${API_BASE_URL}/enums/allCategories`)
+  //     .then((response) => setCategories(response.data))
+  //     .catch((error) => console.error("Error fetching categories", error));
 
-    axios
-      .get(`${API_BASE_URL}/category-budgets/user/${userId}`)
-      .then((response) => setUserCategoryBudgets(response.data))
-      .catch((error) =>
-        console.error("Error fetching category budgets", error)
-      );
+  //   axios
+  //     .get(`${API_BASE_URL}/category-budgets/user/${userId}`)
+  //     .then((response) => setUserCategoryBudgets(response.data))
+  //     .catch((error) =>
+  //       console.error("Error fetching category budgets", error)
+  //     );
 
-    axios
-      .get(`${API_BASE_URL}/enums/allCurrencies`)
-      .then((response) => setCurrencies(response.data))
-      .catch((error) => console.error("Error fetching currencies", error));
-  }, [userId]);
+  //   axios
+  //     .get(`${API_BASE_URL}/enums/allCurrencies`)
+  //     .then((response) => setCurrencies(response.data))
+  //     .catch((error) => console.error("Error fetching currencies", error));
+  // }, [userId]);
+
+  const handleLogin = async (user) => {
+  setIsAuthenticated(true);
+  setUserData(user);
+
+  // Fetch additional data after login
+  try {
+    const categoriesResponse = await axios.get(`${API_BASE_URL}/enums/allCategories`);
+    setCategories(categoriesResponse.data);
+
+    const budgetsResponse = await axios.get(`${API_BASE_URL}/category-budgets/user/${user.id}`);
+    setUserCategoryBudgets(budgetsResponse.data);
+
+    const currenciesResponse = await axios.get(`${API_BASE_URL}/enums/allCurrencies`);
+    setCurrencies(currenciesResponse.data);
+  } catch (error) {
+    console.error("Error fetching data after login", error);
+  }
+};
+
 
   return (
     <div className="App">

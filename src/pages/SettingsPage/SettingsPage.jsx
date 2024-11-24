@@ -3,15 +3,16 @@ import "./SettingsPage.css";
 import CategoryBudgetList from '../../components/Settings/CategoryBudgetList.jsx';
 import CategoryBudgetModal from '../../components/Settings/CategoryBudgetModal.jsx';
 import UserDetailsForm from '../../components/Settings/UserDetailsForm.jsx';
-import axios from 'axios';
 import TokenManager from '../../services/TokenManager';
+import apiClient from "../../services/ApiInterceptor.jsx";
+import AuthAPI from "../../services/AuthAPI.jsx";
 
 function SettingsPage({
   userData,
   currencies,
   categories,
   userCategoryBudgets,
-  setUserCategoryBudgets
+  setUserCategoryBudgets,
 }) {
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   const [name, setName] = useState(userData?.name || "");
@@ -43,15 +44,36 @@ function SettingsPage({
     };
 
     try {
-      await axios.patch(`${API_BASE_URL}/user/${userId}`, updatedData, {
+      await apiClient.patch(`${API_BASE_URL}/user/${userId}`, updatedData, {
         headers: { "Content-Type": "application/json" },
       });
       alert("User details updated successfully!");
+      
+      setMonthlyBudget(updatedData.monthlyBudget);
+      setCurrency(updatedData.preferredCurrency);
+      setName(updatedData.name);
+      setEmail(updatedData.email);
+
     } catch (error) {
       console.error("Error updating user data:", error);
       alert("Error updating user data: " + error.message);
     }
   };
+
+  useEffect(() => {
+    // Fetch the current user data when the component mounts
+    AuthAPI.fetchCurrentUser()
+      .then((response) => {
+        // Update the user data only once, not after it's already updated
+        setMonthlyBudget(response.monthlyBudget);
+        setCurrency(response.preferredCurrency);
+        setName(response.name);
+        setEmail(response.email);
+      })
+      .catch((error) => {
+        console.error("Error fetching user data:", error);
+      });
+  }, []); // Empty dependency array to run only on mount
 
   const handleAddCategoryBudget = () => {
     setIsModalOpen(true);
@@ -71,14 +93,13 @@ function SettingsPage({
         id: editingBudgetId,
         category: newCategory,
         budget_amount: parseFloat(newCategoryBudget),
-        //user_id: userData?.id, // Use userData?.id to get the user ID
         user_id: userId, 
     };
 
     try {
         if (editingBudgetId) {
             // Update existing budget
-            await axios.put(`${API_BASE_URL}/category-budgets/${editingBudgetId}`, newBudget);
+            await apiClient.put(`${API_BASE_URL}/category-budgets/${editingBudgetId}`, newBudget);
             // Update the budget in the state
             setUserCategoryBudgets(prevBudgets => 
                 prevBudgets.map(budget => 
@@ -88,7 +109,7 @@ function SettingsPage({
             alert("Category budget updated successfully!");
         } else {
             // Create new budget
-            const response = await axios.post(`${API_BASE_URL}/category-budgets`, newBudget);
+            const response = await apiClient.post(`${API_BASE_URL}/category-budgets`, newBudget);
             setUserCategoryBudgets([...userCategoryBudgets, response.data]); // Optimistic update
             alert("Category budget added successfully!");
         }
@@ -112,7 +133,7 @@ function SettingsPage({
     if (confirmed) {
         try {
             // Make the API call to delete the category budget
-            await axios.delete(`${API_BASE_URL}/category-budgets/${categoryBudgetId}`);
+            await apiClient.delete(`${API_BASE_URL}/category-budgets/${categoryBudgetId}`);
             // Update the state to remove the deleted category budget
             setUserCategoryBudgets(prevBudgets => 
                 prevBudgets.filter(budget => budget.id !== categoryBudgetId)

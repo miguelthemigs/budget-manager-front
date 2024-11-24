@@ -1,16 +1,21 @@
 import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import styles from "./NavBar.module.css";
+import TokenManager from "../../services/TokenManager";
 
 function NavBar() {
-    const [isOpen, setIsOpen] = useState(false); // Toggle dropdown on mobile
+    const [isOpen, setIsOpen] = useState(false); 
+    const isAdmin = TokenManager.getUserRole() === "ADMIN";
 
     const links = [
         { id: 1, path: "/", text: "Expense Tracker" },
-        { id: 2, path: "/profile", text: "Profile" },     
-        { id: 3, path: "/overview", text: "Overview" },     
+        { id: 2, path: "/profile", text: "Profile" },      
         { id: 4, path: "/loan", text: "Loan Tracker" },
     ];
+
+    if (isAdmin) {
+        links.push({ id: 3, path: "/dashboard", text: "Admin Dashboard" });
+    }
 
     const toggleNavbar = () => {
         setIsOpen(!isOpen);

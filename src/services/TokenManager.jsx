@@ -24,6 +24,10 @@ const TokenManager = {
         const claims = TokenManager.getClaims();
         return claims?.userId || null; 
     },
+    getUserRole: () => {
+        const claims = TokenManager.getClaims();
+        return claims?.role || null;
+    },
     isTokenExpired: () => {
         const claims = TokenManager.getClaims();
         if (!claims || !claims.exp) return true; 

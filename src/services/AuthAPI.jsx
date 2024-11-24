@@ -1,12 +1,14 @@
 import axios from "axios";
 import TokenManager from "./TokenManager";
-const userId = TokenManager.getUserId(); 
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
+import apiClient from './ApiInterceptor';
 
 const AuthAPI = {
   login: async (email, password) => {
     try {
       const response = await axios
-        .post("http://localhost:8080/auth/login", { email, password });
+        .post(`${API_BASE_URL}/auth/login`, { email, password });
       const accessToken = response.data;
       if (!accessToken) {
         throw new Error("No access token returned.");
@@ -22,7 +24,7 @@ const AuthAPI = {
 
   register: async (registrationData) => {
     try {
-      const response = await axios.post("http://localhost:8080/auth/register", registrationData);
+      const response = await axios.post(`${API_BASE_URL}/auth/register`, registrationData);
       console.log("Registration successful:", response.data);
       return response.data;
     } catch (error) {
@@ -32,12 +34,15 @@ const AuthAPI = {
   },
 
   fetchCurrentUser: async () => {
+    const userId = TokenManager.getUserId(); 
     try {
       const token = TokenManager.getAccessToken();
       if (!token) throw new Error("No access token found.");
 
-      const response = await axios.get(`http://localhost:8080/user/${userId}`);
+      const response = await apiClient.get(`${API_BASE_URL}/user/${userId}`);
+      console.log("User fetch"+response.data);
       return response.data;
+      
     } catch (error) {
       console.error("Failed to fetch current user", error);
       throw error;

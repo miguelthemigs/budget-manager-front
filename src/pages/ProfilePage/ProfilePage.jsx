@@ -4,6 +4,7 @@ import { NavLink } from "react-router-dom"; // Use NavLink for navigation
 import { FiSettings } from 'react-icons/fi'; // Import the settings icon from react-icons
 import "./ProfilePage.css"; // Import the CSS file
 import TokenManager from "../../services/TokenManager";
+import apiClient from '../../services/ApiInterceptor';
 
 function ProfilePage() {
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -20,7 +21,7 @@ function ProfilePage() {
   useEffect(() => {
     const fetchMonthlySpending = async () => {
       try {
-        const response = await axios.get(
+        const response = await apiClient.get(
           `${API_BASE_URL}/expenses/monthly?userId=${userId}&month=${filterDate}`
         );
         setMonthlySpending((prev) => ({
@@ -33,10 +34,10 @@ function ProfilePage() {
     };
 
     fetchMonthlySpending();
-  }, [filterDate, userId]);
+  }, [filterDate, userId, user?.monthlyBudget]);
 
     useEffect(() => {
-        axios.get(`${API_BASE_URL}/user/${userId}`) 
+        apiClient.get(`${API_BASE_URL}/user/${userId}`) 
             .then(response => {
                 setUser(response.data); 
             })
@@ -48,6 +49,10 @@ function ProfilePage() {
     const handleLogout = () => {
         console.log("User logged out");
     };
+
+    const percentageSpent = user && user.monthlyBudget
+    ? ((monthlySpending[filterDate] || 0) / user.monthlyBudget) * 100
+    : 0;
 
     return (
         <div>
@@ -65,7 +70,8 @@ function ProfilePage() {
                         <h3 className="ProfilePage__statsHeading">Spending Statistics</h3>
                         <p className="ProfilePage__statsPlaceholder">Graph or statistics will go here.</p>
                         <p className="ProfilePage__subheading"> Monthly Budget: {user.monthlyBudget} {user.preferredCurrency} </p>
-                        <h4 className="ProfilePage__subheading"> Percentage of budget spent: {((monthlySpending[filterDate] || 0) % user.monthlyBudget) / 100}% ({(monthlySpending[filterDate] || 0) }  {user.preferredCurrency})</h4>
+                        <h4 className="ProfilePage__subheading"> Percentage of budget spent: {percentageSpent.toFixed(2)}% (
+                          {monthlySpending[filterDate] || 0} {user.preferredCurrency})</h4>
                         <h3 className="ProfilePage__heading"> Left to spend this month: {user.monthlyBudget - (monthlySpending[filterDate] || 0)} {user.preferredCurrency} </h3>
                         
                     </div>

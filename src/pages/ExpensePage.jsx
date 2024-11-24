@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import "./Pages.css"; // Import the CSS file
-import { FaTrash, FaEdit } from "react-icons/fa"; // Import the delete icon from Font Awesome
 import MonthlySpending from '../components/Expenses/MonthlySpending';
 import ExpenseForm from '../components/Expenses/ExpenseForm';
 import ExpenseFilter from '../components/Expenses/ExpenseFilter';
 import ExpenseList from '../components/Expenses/ExpenseList';
 import TokenManager from "../services/TokenManager";
+import apiClient from '../services/ApiInterceptor';
 
 function ExpensePage({ user, categories }) {
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -33,7 +32,7 @@ function ExpensePage({ user, categories }) {
   useEffect(() => {
     const fetchMonthlySpending = async () => {
       try {
-        const response = await axios.get(
+        const response = await apiClient.get(
           `${API_BASE_URL}/expenses/monthly?userId=${userId}&month=${filterDate}`
         );
         setMonthlySpending((prev) => ({
@@ -51,7 +50,7 @@ function ExpensePage({ user, categories }) {
   useEffect(() => {
     const fetchMonthlyExpenses = async () => {
       try {
-        const response = await axios.get(
+        const response = await apiClient.get(
           `${API_BASE_URL}/expenses/perMonth?userId=${userId}&month=${filterDate.split("-")[1]}&year=${filterDate.split("-")[0]}`
         );
         setExpenses(response.data);
@@ -86,14 +85,14 @@ function ExpensePage({ user, categories }) {
       console.log("Expense Data to be sent:", expenseData); // Log the data
       if (editMode) {
         // Send a PUT request to update the expense
-        await axios.put(`${API_BASE_URL}/expenses/${editExpenseId}`, expenseData);
+        await apiClient.put(`${API_BASE_URL}/expenses/${editExpenseId}`, expenseData);
       } else {
         // Send a POST request to add a new expense
-        await axios.post(`${API_BASE_URL}/expenses`, expenseData);
+        await apiClient.post(`${API_BASE_URL}/expenses`, expenseData);
       }
 
       // Refresh the expense list after adding or editing
-      const response = await axios.get(
+      const response = await apiClient.get(
         `${API_BASE_URL}/expenses?userId=${userId}`
       );
       setExpenses(response.data);
@@ -126,10 +125,10 @@ function ExpensePage({ user, categories }) {
     const confirmed = window.confirm("Are you sure you want to delete this expense?");
     if (confirmed) {
       try {
-        await axios.delete(`${API_BASE_URL}/expenses/${expenseId}`);
+        await apiClient.delete(`${API_BASE_URL}/expenses/${expenseId}`);
 
         // Refresh the expense list after deletion
-        const response = await axios.get(
+        const response = await apiClient.get(
           `${API_BASE_URL}/expenses?userId=${userId}`
         );
         setExpenses(response.data);

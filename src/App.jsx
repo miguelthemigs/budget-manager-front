@@ -1,126 +1,70 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
-import "./App.css";
-import NavBar from "./components/NavBar/NavBar.jsx";
 import { Route, Routes, BrowserRouter as Router } from "react-router-dom";
+import "./App.css";
+
+import NavBar from "./components/NavBar/NavBar.jsx";
 import ExpensePage from "./pages/ExpensePage";
 import ProfilePage from "./pages/ProfilePage/ProfilePage.jsx";
 import SettingsPage from "./pages/SettingsPage/SettingsPage.jsx";
-import OverviewPage from "./pages/OverviewPage";
+import DashboardPage from "./pages/DashboardPage.jsx";
 import LoginPage from "./pages/Auth/LoginPage";
 import RegistrationPage from "./pages/Auth/RegistrationPage";
 import ProtectedRoute from "./components/Auth/ProtectedRoute";
 import TokenManager from "./services/TokenManager";
-import AuthAPI from './services/AuthAPI';
+import { fetchData, handleLogin } from "./services/DataService.jsx";
 
 function App() {
   const [userData, setUserData] = useState(null);
   const [categories, setCategories] = useState([]);
   const [userCategoryBudgets, setUserCategoryBudgets] = useState([]);
   const [currencies, setCurrencies] = useState([]);
-  const userId = TokenManager.getUserId(); 
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+  const [isAdmin, setIsAdmin] = useState(false);
 
-  // useEffect(() => {
-  //   axios
-  //     .get(`${API_BASE_URL}/user/${userId}`)
-  //     .then((response) => setUserData(response.data))
-  //     .catch((error) => console.error("Error fetching user data:", error));
-
-  //   axios
-  //     .get(`${API_BASE_URL}/enums/allCategories`)
-  //     .then((response) => setCategories(response.data))
-  //     .catch((error) => console.error("Error fetching categories", error));
-
-  //   axios
-  //     .get(`${API_BASE_URL}/category-budgets/user/${userId}`)
-  //     .then((response) => setUserCategoryBudgets(response.data))
-  //     .catch((error) =>
-  //       console.error("Error fetching category budgets", error)
-  //     );
-
-  //   axios
-  //     .get(`${API_BASE_URL}/enums/allCurrencies`)
-  //     .then((response) => setCurrencies(response.data))
-  //     .catch((error) => console.error("Error fetching currencies", error));
-  // }, [userId]);
- // Rehydrate user data and authentication state on app load
- 
- useEffect(() => {
-  const rehydrateUser = async () => {
-    try {
-      if (TokenManager.getAccessToken() && !TokenManager.isTokenExpired()) {
-        // Decode claims to extract user ID
-        const userId = TokenManager.getUserId();
-
-        // Optionally fetch the user data
-        const user = await AuthAPI.fetchCurrentUser(userId);
-        setUserData(user);
-        setIsAuthenticated(true);
-      } else {
-        TokenManager.clear();
-      }
-    } catch (error) {
-      console.error("Failed to rehydrate user data:", error);
+   // Define rehydrateUser as a reusable function
+   const rehydrateUser = async () => {
+    if (TokenManager.getAccessToken() && !TokenManager.isTokenExpired()) {
+      const userId = TokenManager.getUserId();
+      await fetchData(userId, setUserData, setCategories, setUserCategoryBudgets, setCurrencies);
+      setIsAuthenticated(true);
+    } else {
       TokenManager.clear();
     }
   };
 
-  rehydrateUser();
-}, []);
-
-  const handleLogin = async (user) => {
-  setIsAuthenticated(true);
-  setUserData(user);
-
-  // Fetch additional data after login
-  try {
-    const categoriesResponse = await axios.get(`${API_BASE_URL}/enums/allCategories`);
-    setCategories(categoriesResponse.data);
-
-    const budgetsResponse = await axios.get(`${API_BASE_URL}/category-budgets/user/${userId}`);
-    setUserCategoryBudgets(budgetsResponse.data);
-
-    const currenciesResponse = await axios.get(`${API_BASE_URL}/enums/allCurrencies`);
-    setCurrencies(currenciesResponse.data);
-
-    
-  } catch (error) {
-    console.error("Error fetching data after login", error);
-  }
-};
-
+  // Call rehydrateUser on component mount
+  useEffect(() => {
+    rehydrateUser();
+  }, []);
+  // Function to handle logout and clear cache
+  const handleLogout = () => {
+    TokenManager.clear();
+    localStorage.removeItem("appData");
+    setUserData(null);
+    setCategories([]);
+    setUserCategoryBudgets([]);
+    setCurrencies([]);
+    setIsAuthenticated(false);
+  };
 
   return (
     <div className="App">
       <Router>
-        
-          {/* <NavBar /> */}
-          {isAuthenticated && <NavBar />}
-        
-      
+        {isAuthenticated && <NavBar onLogout={handleLogout} />}
         <Routes>
           {/* Unprotected routes */}
-          
           <Route
             path="/login"
-            element={<LoginPage onLogin={handleLogin} />}
+            element={<LoginPage onLogin={() => handleLogin(setIsAuthenticated, setUserData, setIsAdmin, setUserData, setCategories, setUserCategoryBudgets, setCurrencies)} />}
           />
-          <Route
-            path="/register"
-            element={<RegistrationPage onRegister={(data) => console.log(data)} />}
-          />
-          
+          <Route path="/register" element={<RegistrationPage />} />
+
           {/* Protected routes */}
           <Route
             path="/"
             element={<ProtectedRoute element={() => <ExpensePage user={userData} categories={categories} />} />}
           />
-          <Route
-            path="/profile"
-            element={<ProtectedRoute element={ProfilePage} />}
-          />
+          <Route path="/profile" element={<ProtectedRoute element={ProfilePage} />} />
           <Route
             path="/settings"
             element={
@@ -134,19 +78,10 @@ function App() {
                     setUserCategoryBudgets={setUserCategoryBudgets}
                   />
                 )}
-                roles={["USER", "ADMIN"]}
               />
             }
           />
-          <Route
-            path="/overview"
-            element={
-              <ProtectedRoute
-                element={OverviewPage}
-                roles={["ADMIN"]}
-              />
-            }
-          />
+          <Route path="/dashboard" element={<ProtectedRoute element={DashboardPage} roles={["ADMIN"]} />} />
         </Routes>
       </Router>
     </div>

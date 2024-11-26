@@ -1,62 +1,99 @@
-/* General styles */
-body {
-  font-family: Arial, sans-serif;
-  background-color: #121212; /* Dark background */
-  color: #ffffff; /* Light text color */
-  margin: 0;
-  padding: 20px;
-}
-
 /* Main container for the expense manager */
 .expense-container {
-  max-width: 1000px;
-  width: 100%;
-  margin: 0 auto;
-  padding: 40px;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(255, 255, 255, 0.1); /* Slightly lighter shadow */
-  background-color: transparent; /* Match container background to main background */
-  height: 600px; /* Set a fixed height */
-  overflow: auto; /* Add scroll if content exceeds height */
+  display: flex; /* Flexbox for two-column layout */
+  gap: 20px; /* Space between left and right sections */
+  max-width: 1400px; /* Increased width to fill more of the screen */
+  width: 95%; /* Use 95% of the viewport width for responsiveness */
+  margin: 0 auto; /* Center the container horizontally */
+  padding: 10px;
+  height: 80vh; /* Restrict height to avoid excessive vertical space */
+  box-sizing: border-box;
 }
 
+/* Left side (Spending and Form) */
+.expense-left {
+  flex: 1.5; /* Takes less space relative to the right section */
+  display: flex;
+  flex-direction: column;
+  gap: 1px; /* Space between Spending and Form */
+  background-color: #1a1a1a;
+  padding: 120px;
+  border-radius: 8px;
+}
+
+/* Right side (Filter and List) */
+.expense-right {
+  flex: 1; /* Takes up more space than the left section */
+  display: flex;
+  flex-direction: column; /* Stack the filter and list */
+  justify-content: flex; /* Align items at the top */
+  gap: 10px; /* Space between filter and list */
+  background-color: #1a1a1a;
+  padding: 120px;
+  border-radius: 8px;
+  overflow-y: auto; /* Enable vertical scrolling */
+  max-height: calc(100vh - 40px); /* Prevent overflowing vertically */
+  min-height: 300px; /* Ensure some height even when empty */
+}
+
+/* Handle empty expense list */
+.expense-list {
+  display: flex;
+  flex-direction: column; /* Stack items when present */
+  gap: 20px; /* Space between list items */
+  flex-grow: 1; /* Ensure it fills available vertical space */
+  justify-content: center; /* Center content when empty */
+  align-items: center; /* Center horizontally */
+  text-align: center; /* Center any placeholder text */
+  padding: 5px;
+}
+
+.expense-list:empty::after {
+  content: "No expenses to display. Add one above!"; /* Placeholder message */
+  color: #999;
+  font-size: 18px;
+  font-style: italic;
+}
+
+/* Monthly Spending */
+.monthly-spending {
+  font-size: 24px;
+  padding: 10px;
+  background-color: #2a2a2a;
+  border-radius: 8px;
+  text-align: center;
+  box-shadow: 0 2px 5px rgba(255, 255, 255, 0.1);
+}
+
+.monthly-spending strong {
+  color: #28a745;
+}
+
+/* Expense form styles */
 .expense-form {
   display: flex;
   flex-direction: column;
-  gap: 15px; /* Space between form elements */
-  margin-bottom: 20px;
-  flex-grow: 0; /* Prevent growth of the form */
-}
-
-.expense-list {
-  display: flex;
-  flex-direction: column; /* Make sure it’s a column layout */
+  gap: 15px;
 }
 
 .expense-label {
   font-weight: bold;
   margin-bottom: 5px;
-  color: #ffffff; /* Light label color */
 }
 
 .expense-input {
   padding: 10px;
-  border: 1px solid #ccc; /* Light border */
+  border: 1px solid #ccc;
   border-radius: 4px;
   font-size: 16px;
-  width: 100%; /* Full width */
-  background-color: #333333; /* Dark input background */
-  color: #ffffff; /* Light text color */
-}
-
-.expense-input::-webkit-inner-spin-button {
-  -webkit-appearance: none; /* Hides spin buttons */
+  background-color: #333333;
+  color: #ffffff;
 }
 
 .expense-button {
   padding: 10px;
-  background-color: #28a745; /* Green button */
-  color: #ffffff; /* Light text color */
+  background-color: #28a745;
+  color: #ffffff;
   border: none;
   border-radius: 4px;
   cursor: pointer;
@@ -64,36 +101,48 @@ body {
 }
 
 .expense-button:hover {
-  background-color: #218838; /* Darker green on hover */
+  background-color: #218838;
 }
 
-/* Filter section */
+/* Expense filter */
 .expense-filter-section {
-  margin: 20px 0;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  margin-bottom: 20px;
 }
 
-/* Expenses List */
-.expense-list {
-  list-style-type: none; /* Remove bullet points */
-  padding: 0; /* Remove padding */
-  max-height: 400px; /* Set a maximum height for the list */
-  overflow-y: auto; /* Scrollable if items exceed the height */
+.expense-filter-section label {
+  font-weight: bold;
 }
 
-.expense-list-item {
-  background-color: #2a2a2a; /* Dark list item background */
+.expense-filter-section input {
   padding: 10px;
-  margin: 5px 0; /* Space between items */
+  font-size: 16px;
+  border: 1px solid #ccc;
   border-radius: 4px;
-  max-height: 50px; /* Set a fixed height for list items */
-  overflow: hidden; /* Hide overflow */
-  text-overflow: ellipsis; /* Show ellipsis for overflowing text */
-  white-space: nowrap; /* Prevent text from wrapping */
+  background-color: #333333;
+  color: #ffffff;
 }
 
-.expense-strong {
-  color: #ffffff; /* Light text color for strong */
+/* Expense List Items */
+.expense-list-item {
+  background-color: #2a2a2a;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(255, 255, 255, 0.1);
+}
+
+.expense-item-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.expense-item-actions button {
+  padding: 5px 10px;
+  border-radius: 4px;
+  background-color: #444444;
+  border: 1px solid #fff;
+  cursor: pointer;
+}
+
+.expense-item-actions button:hover {
+  background-color: #555555;
 }

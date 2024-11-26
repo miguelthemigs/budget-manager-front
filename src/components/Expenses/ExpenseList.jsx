@@ -3,22 +3,32 @@ import { FaTrash, FaEdit } from "react-icons/fa";
 
 function ExpenseList({ expenses, onEdit, onDelete, userCurrency }) {
     return (
-        <ul className="expense-list">
+        <div className="expense-list">
             {expenses.map((expense) => (
-                <li key={expense.id} className="expense-list-item">
-                    <strong className="expense-strong">Category:</strong> {expense.category} |{" "}
-                    <strong className="expense-strong">Description:</strong> {expense.description} |{" "}
-                    <strong className="expense-strong">Amount:</strong> {expense.amount} {userCurrency} |{" "}
-                    <strong className="expense-strong">Date:</strong> {expense.date}{" "}
-                    <button onClick={() => onEdit(expense)} className="expense-button">
-                        <FaEdit />
-                    </button>
-                    <button onClick={() => onDelete(expense.id)} className="expense-button">
-                        <FaTrash />
-                    </button>
-                </li>
+                <div key={expense.id} className="expense-list-item">
+                    <div>
+                        <strong className="expense-strong">Category:</strong> {expense.category}
+                    </div>
+                    <div>
+                        <strong className="expense-strong">Description:</strong> {expense.description}
+                    </div>
+                    <div>
+                        <strong className="expense-strong">Amount:</strong> {expense.amount} {userCurrency}
+                    </div>
+                    <div>
+                        <strong className="expense-strong">Date:</strong> {expense.date}
+                    </div>
+                    <div className="expense-item-actions">
+                        <button onClick={() => onEdit(expense)} className="expense-button">
+                            <FaEdit />
+                        </button>
+                        <button onClick={() => onDelete(expense.id)} className="expense-button">
+                            <FaTrash />
+                        </button>
+                    </div>
+                </div>
             ))}
-        </ul>
+        </div>
     );
 }
 

@@ -55,32 +55,55 @@ function ProfilePage() {
     : 0;
 
     return (
-        <div>
-            <NavLink to="/settings" className="ProfilePage__settingsIcon">
-                <FiSettings size={24} /> 
-            </NavLink>
-
-            <h1 className="ProfilePage__heading">Profile Page</h1>
-            {user ? (
-                <div>
-                    <h2 className="ProfilePage__subheading">Welcome, {user.name}!</h2> 
-                    <button className="ProfilePage__button" onClick={handleLogout}>Logout</button> 
-                    
-                    <div className="ProfilePage__statsContainer">
-                        <h3 className="ProfilePage__statsHeading">Spending Statistics</h3>
-                        <p className="ProfilePage__statsPlaceholder">Graph or statistics will go here.</p>
-                        <p className="ProfilePage__subheading"> Monthly Budget: {user.monthlyBudget} {user.preferredCurrency} </p>
-                        <h4 className="ProfilePage__subheading"> Percentage of budget spent: {percentageSpent.toFixed(2)}% (
-                          {monthlySpending[filterDate] || 0} {user.preferredCurrency})</h4>
-                        <h3 className="ProfilePage__heading"> Left to spend this month: {user.monthlyBudget - (monthlySpending[filterDate] || 0)} {user.preferredCurrency} </h3>
-                        
-                    </div>
-                </div>
-            ) : (
-                <p className="ProfilePage__loading">Loading user data...</p> 
-            )}
-        </div>
-    );
+      <div>
+          <NavLink to="/settings" className="ProfilePage__settingsIcon">
+              <FiSettings size={24} />
+          </NavLink>
+  
+          <h1 className="ProfilePage__heading">Profile Page</h1>
+  
+          {user ? (
+              <div>
+                  <h2 className="ProfilePage__subheading">Welcome, {user.name}!</h2>
+                  <button className="ProfilePage__button" onClick={handleLogout}>Logout</button>
+  
+                  {/* Stats Section */}
+                  <div className="ProfilePage__statsContainer">
+                      <h3 className="ProfilePage__statsHeading">Spending Statistics</h3>
+                      <p className="ProfilePage__statsPlaceholder">Graph or statistics will go here.</p>
+                      
+                      <div className="ProfilePage__statsInfo">
+                          <p className="ProfilePage__statItem">
+                              <span className="ProfilePage__label">Monthly Budget:</span> {user.monthlyBudget} {user.preferredCurrency}
+                          </p>
+                          <p className="ProfilePage__statItem">
+                              <span className="ProfilePage__label">Percentage of budget spent:</span> {percentageSpent.toFixed(2)}% ({monthlySpending[filterDate] || 0} {user.preferredCurrency})
+                          </p>
+                          <p className="ProfilePage__statItem">
+                              <span className="ProfilePage__label">Left to spend this month:</span> {user.monthlyBudget - (monthlySpending[filterDate] || 0)} {user.preferredCurrency}
+                          </p>
+                      </div>
+                  </div>
+  
+                  {/* Widgets Section */}
+                  <div className="ProfilePage__widgets">
+                      <div className="ProfilePage__widget">
+                          <h4>Category Budget 1</h4>
+                          <div>% Spent</div>
+                      </div>
+                      <div className="ProfilePage__widget">
+                          <h4>Category Budget 2</h4>
+                          <div>% Spent</div>
+                      </div>
+                  </div>
+              </div>
+          ) : (
+              <p className="ProfilePage__loading">Loading user data...</p>
+          )}
+      </div>
+  );
+  
+  
 }
 
 export default ProfilePage;

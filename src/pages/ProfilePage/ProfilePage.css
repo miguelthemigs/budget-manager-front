@@ -1,93 +1,97 @@
 /* ProfilePage.css */
 
-/* General styles for Profile Page */
-.ProfilePage {
-    font-family: Arial, sans-serif;
-}
-
-/* Main container for the profile */
-.ProfilePage__container {
-    width: 700px;
-    height: 500px;
-    margin: 0 auto;
-    background: #2a2a2a; /* Darker container background for consistency */
-    padding: 30px;
-    border-radius: 12px; /* Slightly increased border radius for a softer look */
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3); /* Softer shadow */
-    position: relative; /* Enables the settings icon to be positioned absolutely */
-    padding-top: 60px; /* Add padding to avoid navbar overlap */
-}
-
-/* Heading styles */
+/* ProfilePage heading */
 .ProfilePage__heading {
     text-align: center;
-    color: #00bcd4; /* Bright color for the main heading */
+    color: #00bcd4;
     margin-bottom: 20px;
-    font-size: 2.2em; /* Larger font size for prominence */
+    font-size: 2.2em;
 }
 
+/* Subheading styles */
 .ProfilePage__subheading {
-    color: #e0e0e0; /* Light grey for subheadings for better contrast */
+    color: #e0e0e0;
     margin-bottom: 10px;
-}
-
-.ProfilePage__statsHeading {
-    color: #ffffff; /* Light text color for statistics heading */
-    margin-bottom: 10px;
-}
-
-/* Logout button styles */
-.ProfilePage__button {
-    padding: 12px 18px; /* Increased padding for a more comfortable button */
-    background-color: #f44336; /* Red button for logout */
-    color: #ffffff; /* Light text color */
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 18px; /* Slightly larger font for readability */
-    transition: background-color 0.3s ease, transform 0.2s; /* Smooth hover effect with scaling */
-    align-self: flex-start; /* Align button to the left */
-}
-
-.ProfilePage__button:hover {
-    background-color: #d32f2f; /* Darker red on hover */
-    transform: scale(1.05); /* Slightly scale the button on hover */
+    font-size: 1.1em;
 }
 
 /* Stats container styles */
 .ProfilePage__statsContainer {
     margin-top: 20px;
     padding: 15px;
-    background-color: #1e1e1e; /* Match expenses container color */
+    background-color: #1e1e1e;
     border-radius: 8px;
     box-shadow: 0 2px 15px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
-/* Placeholder styles */
+/* Placeholder for graph or statistics */
 .ProfilePage__statsPlaceholder {
-    color: #b0bec5; /* Light grey color for placeholder text */
-    font-size: 14px; /* Slightly smaller font */
+    color: #b0bec5;
+    font-size: 14px;
+    text-align: center;
+}
+
+/* Stats items (budget, percentage, remaining amount) */
+.ProfilePage__statsInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.ProfilePage__statItem {
+    font-size: 1.1em;
+    color: #ffffff;
+}
+
+.ProfilePage__label {
+    font-weight: bold;
+}
+
+/* Widgets section */
+.ProfilePage__widgets {
+    display: flex;
+    gap: 20px;
+    justify-content: space-between;
+    padding-top: 20px;
+}
+
+/* Widget styling */
+.ProfilePage__widget {
+    background-color: #2a2a2a;
+    padding: 15px;
+    border-radius: 8px;
+    width: 48%; /* Flex box with two widgets side by side */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.ProfilePage__widget h4 {
+    color: #00bcd4;
+}
+
+/* Button styling */
+.ProfilePage__button {
+    padding: 12px 18px;
+    background-color: #f44336;
+    color: #ffffff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 18px;
+    transition: background-color 0.3s ease, transform 0.2s;
+}
+
+.ProfilePage__button:hover {
+    background-color: #d32f2f;
+    transform: scale(1.05);
 }
 
 /* Loading state */
 .ProfilePage__loading {
-    color: #ffffff; /* Light text color for loading message */
-    text-align: center; /* Center the loading text */
-}
-
-/* Responsive adjustments */
-@media (max-width: 600px) {
-    .ProfilePage__container {
-        padding: 20px; /* Reduce padding on smaller screens */
-    }
-
-    .ProfilePage__heading {
-        font-size: 1.8em; /* Slightly smaller heading */
-    }
-
-    .ProfilePage__button {
-        width: 100%; /* Full width button on small screens */
-    }
+    color: #ffffff;
+    text-align: center;
 }
 
 /* Settings icon styling */
@@ -95,12 +99,23 @@
     position: absolute;
     top: 20px;
     right: 20px;
-    color: #ffffff; /* White color for the icon */
-    text-decoration: none; /* Remove underline from NavLink */
-    z-index: 10; /* Ensures icon appears above the container */
+    color: #ffffff;
+    z-index: 10;
 }
 
 .ProfilePage__settingsIcon:hover {
-    color: #00bcd4; /* Change color to main heading color on hover */
-    transform: scale(1.1); /* Slightly enlarge on hover */
+    color: #00bcd4;
+    transform: scale(1.1);
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+    .ProfilePage__widgets {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .ProfilePage__widget {
+        width: 100%;
+    }
 }

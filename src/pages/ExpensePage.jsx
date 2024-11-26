@@ -148,23 +148,31 @@ function ExpensePage({ user, categories }) {
     : { category: "", description: "", amount: "", date: new Date().toISOString().split("T")[0] }; // Default values
 
   return (
-    <div>
+    <div className="expense-container">
+    {/* Left side: Monthly Spending and Form */}
+    <div className="expense-left">
       <MonthlySpending spending={monthlySpending[filterDate]} />
       <ExpenseForm
         onSubmit={handleAddOrEditExpense}
         editMode={editMode}
         categories={categories}
-        expense={currentExpense} // Pass the current expense to the form
-        userCurrency={user?.preferredCurrency} // Adjust to match your user currency
+        expense={currentExpense}
+        userCurrency={user?.preferredCurrency}
       />
+    </div>
+  
+    {/* Right side: Expense List */}
+    <div className="expense-right">
       <ExpenseFilter filterDate={filterDate} onFilterChange={setFilterDate} />
       <ExpenseList
         expenses={filteredExpenses}
         onEdit={handleEditClick}
         onDelete={handleDeleteClick}
-        userCurrency={user?.preferredCurrency} // Adjust as needed
+        userCurrency={user?.preferredCurrency}
       />
     </div>
+  </div>
+  
   );
 }
 

@@ -40,6 +40,7 @@ function DashboardPage() {
                 {users.map(user => (
                     <li key={user.id} className="user-item">
                         <span>{user.firstName} {user.lastName} ({user.email})</span>
+                        <span>{user.role}</span>
                         <button 
                             className="delete-button" 
                             onClick={() => handleDeleteUser(user.id)}

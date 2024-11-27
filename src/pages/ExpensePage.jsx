@@ -82,7 +82,6 @@ function ExpensePage({ user, categories }) {
         userId: userId,
       };
 
-      console.log("Expense Data to be sent:", expenseData); // Log the data
       if (editMode) {
         // Send a PUT request to update the expense
         await apiClient.put(`${API_BASE_URL}/expenses/${editExpenseId}`, expenseData);

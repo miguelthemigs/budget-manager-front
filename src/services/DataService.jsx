@@ -19,7 +19,6 @@ export const fetchData = async (userId, setUserData, setCategories, setUserCateg
       budgets: budgetsResponse.data,
       currencies: currenciesResponse.data,
     };
-    console.log("Fetched data:", currenciesResponse.data);
 
     // Set state with the fetched data
     setUserData(data.user);

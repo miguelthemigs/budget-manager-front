@@ -5,6 +5,10 @@ import { FiSettings } from "react-icons/fi"; // Import the settings icon from re
 import "./ProfilePage.css"; // Import the CSS file
 import TokenManager from "../../services/TokenManager";
 import apiClient from "../../services/ApiInterceptor";
+import Stats from "../../components/Profile/UserStats";
+import UserInfo from "../../components/Profile/UserInfo";
+import CategoryWidgets from "../../components/Profile/CategoryWidgets";
+import Header from "../../components/Profile/ProfileHeader";
 
 function ProfilePage() {
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -12,13 +16,9 @@ function ProfilePage() {
   const [monthlySpending, setMonthlySpending] = useState({});
   const [categoryBudgets, setCategoryBudgets] = useState([]);
   const [categorySpending, setCategorySpending] = useState({});
-
   const [filterDate, setFilterDate] = useState(() => {
     const now = new Date();
-    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(
-      2,
-      "0"
-    )}`;
+    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
   });
 
   const userId = TokenManager.getUserId();
@@ -112,70 +112,17 @@ function ProfilePage() {
       : 0;
 
   return (
-    <div>
-      <NavLink to="/settings" className="ProfilePage__settingsIcon">
-        <FiSettings size={24} />
-      </NavLink>
-
-      <h1 className="ProfilePage__heading">Profile Page</h1>
-
+    <div className="ProfilePage">
+      <Header />
       {user ? (
-        <div>
-          <h2 className="ProfilePage__subheading">Welcome, {user.name}!</h2>
-          <button className="ProfilePage__button" onClick={handleLogout}>
-            Logout
-          </button>
-
-          {/* Stats Section */}
-          <div className="ProfilePage__statsContainer">
-            <h3 className="ProfilePage__statsHeading">Spending Statistics</h3>
-            <p className="ProfilePage__statsPlaceholder">
-              Graph or statistics will go here.
-            </p>
-
-            <div className="ProfilePage__statsInfo">
-              <p className="ProfilePage__statItem">
-                <span className="ProfilePage__label">Monthly Budget:</span>{" "}
-                {user.monthlyBudget} {user.preferredCurrency}
-              </p>
-              <p className="ProfilePage__statItem">
-                <span className="ProfilePage__label">
-                  Percentage of budget spent:
-                </span>{" "}
-                {percentageSpent.toFixed(2)}% (
-                {monthlySpending[filterDate] || 0} {user.preferredCurrency})
-              </p>
-              <p className="ProfilePage__statItem">
-                <span className="ProfilePage__label">
-                  Left to spend this month:
-                </span>{" "}
-                {user.monthlyBudget - (monthlySpending[filterDate] || 0)}{" "}
-                {user.preferredCurrency}
-              </p>
-            </div>
-          </div>
-
-          {/* Widgets Section */}
-          <div className="ProfilePage__widgets">
-            {categoryBudgets.map((budget) => {
-              const spending = categorySpending[budget.category] || 0; // Default to 0 if no spending found
-              const percentageSpent = (
-                (spending / budget.budget_amount) *
-                100
-              ).toFixed(2);
-
-              return (
-                <div className="ProfilePage__widget" key={budget.category}>
-                  <h4>{budget.category}</h4>
-                  <div>
-                    {percentageSpent}% Spent ({spending} /{" "}
-                    {budget.budget_amount})
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
+        <>
+          <UserInfo user={user} onLogout={() => console.log("User logged out")} />
+          <Stats user={user} monthlySpending={monthlySpending} filterDate={filterDate} />
+          <CategoryWidgets
+            categoryBudgets={categoryBudgets}
+            categorySpending={categorySpending}
+          />
+        </>
       ) : (
         <p className="ProfilePage__loading">Loading user data...</p>
       )}

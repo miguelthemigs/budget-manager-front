@@ -44,7 +44,7 @@ function SettingsPage({
     };
 
     try {
-      await apiClient.patch(`${API_BASE_URL}/user/${userId}`, updatedData, {
+      await apiClient.put(`${API_BASE_URL}/user/${userId}`, updatedData, {
         headers: { "Content-Type": "application/json" },
       });
       alert("User details updated successfully!");

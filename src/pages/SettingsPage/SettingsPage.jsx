@@ -6,6 +6,7 @@ import UserDetailsForm from '../../components/Settings/UserDetailsForm.jsx';
 import TokenManager from '../../services/TokenManager';
 import apiClient from "../../services/ApiInterceptor.jsx";
 import AuthAPI from "../../services/AuthAPI.jsx";
+import { CgPassword } from "react-icons/cg";
 
 function SettingsPage({
   userData,
@@ -38,9 +39,11 @@ function SettingsPage({
     event.preventDefault();
     const updatedData = {
       name,
+      password: userData.password,
       preferredCurrency: currency,
       monthlyBudget: parseFloat(monthlyBudget),
       email,
+      role: userData.role,
     };
 
     try {

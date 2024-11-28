@@ -10,7 +10,7 @@ import UserInfo from "../../components/Profile/UserInfo";
 import CategoryWidgets from "../../components/Profile/CategoryWidgets";
 import Header from "../../components/Profile/ProfileHeader";
 
-function ProfilePage() {
+function ProfilePage({onLogout}) {
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   const [user, setUser] = useState(null);
   const [monthlySpending, setMonthlySpending] = useState({});
@@ -102,10 +102,6 @@ function ProfilePage() {
     }
   }, [categoryBudgets, userId]);
 
-  const handleLogout = () => {
-    console.log("User logged out");
-  };
-
   const percentageSpent =
     user && user.monthlyBudget
       ? ((monthlySpending[filterDate] || 0) / user.monthlyBudget) * 100
@@ -116,7 +112,7 @@ function ProfilePage() {
       <Header />
       {user ? (
         <>
-          <UserInfo user={user} onLogout={() => console.log("User logged out")} />
+          <UserInfo user={user} onLogout={onLogout} />
           <Stats user={user} monthlySpending={monthlySpending} filterDate={filterDate} />
           <CategoryWidgets
             categoryBudgets={categoryBudgets}

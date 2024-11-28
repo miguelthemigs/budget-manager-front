@@ -21,11 +21,16 @@ function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
 
-   // Define rehydrateUser as a reusable function
-   const rehydrateUser = async () => {
+  const rehydrateUser = async () => {
     if (TokenManager.getAccessToken() && !TokenManager.isTokenExpired()) {
       const userId = TokenManager.getUserId();
-      await fetchData(userId, setUserData, setCategories, setUserCategoryBudgets, setCurrencies);
+      await fetchData(
+        userId,
+        setUserData,
+        setCategories,
+        setUserCategoryBudgets,
+        setCurrencies
+      );
       setIsAuthenticated(true);
     } else {
       TokenManager.clear();
@@ -55,16 +60,43 @@ function App() {
           {/* Unprotected routes */}
           <Route
             path="/login"
-            element={<LoginPage onLogin={() => handleLogin(setIsAuthenticated, setUserData, setIsAdmin, setUserData, setCategories, setUserCategoryBudgets, setCurrencies)} />}
+            element={
+              <LoginPage
+                onLogin={() =>
+                  handleLogin(
+                    setIsAuthenticated,
+                    setUserData,
+                    setIsAdmin,
+                    setUserData,
+                    setCategories,
+                    setUserCategoryBudgets,
+                    setCurrencies
+                  )
+                }
+              />
+            }
           />
           <Route path="/register" element={<RegistrationPage />} />
 
           {/* Protected routes */}
           <Route
             path="/"
-            element={<ProtectedRoute element={() => <ExpensePage user={userData} categories={categories} />} />}
+            element={
+              <ProtectedRoute
+                element={() => (
+                  <ExpensePage user={userData} categories={categories} />
+                )}
+              />
+            }
           />
-          <Route path="/profile" element={<ProtectedRoute element={ProfilePage} />} />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute
+                element={() => <ProfilePage onLogout={handleLogout} />}
+              />
+            }
+          />
           <Route
             path="/settings"
             element={
@@ -81,7 +113,12 @@ function App() {
               />
             }
           />
-          <Route path="/dashboard" element={<ProtectedRoute element={DashboardPage} roles={["ADMIN"]} />} />
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute element={DashboardPage} roles={["ADMIN"]} />
+            }
+          />
         </Routes>
       </Router>
     </div>

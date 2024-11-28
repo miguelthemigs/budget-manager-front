@@ -1,7 +1,7 @@
 import axios from "axios";
 import TokenManager from "./TokenManager";
 import apiClient from "./ApiInterceptor";
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;; // Replace with your actual base URL
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL; // Replace with your actual base URL
 
 export const fetchData = async (userId, setUserData, setCategories, setUserCategoryBudgets, setCurrencies) => {
   try {

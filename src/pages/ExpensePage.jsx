@@ -1,15 +1,18 @@
 import React, { useState, useEffect } from "react";
 import "./Pages.css"; // Import the CSS file
-import MonthlySpending from '../components/Expenses/MonthlySpending';
-import ExpenseForm from '../components/Expenses/ExpenseForm';
-import ExpenseFilter from '../components/Expenses/ExpenseFilter';
-import ExpenseList from '../components/Expenses/ExpenseList';
+import MonthlySpending from "../components/Expenses/MonthlySpending";
+import ExpenseForm from "../components/Expenses/ExpenseForm";
+import ExpenseFilter from "../components/Expenses/ExpenseFilter";
+import ExpenseList from "../components/Expenses/ExpenseList";
 import TokenManager from "../services/TokenManager";
-import apiClient from '../services/ApiInterceptor';
+import apiClient from "../services/ApiInterceptor";
+import { toast, ToastContainer } from "react-toastify"; // Import Toastify
+import "react-toastify/dist/ReactToastify.css"; // Import Toastify CSS
 
 function ExpensePage({ user, categories }) {
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-  const userId = TokenManager.getUserId(); 
+  const userId = TokenManager.getUserId();
+
   // State for form fields
   const [category, setCategory] = useState("");
   const [description, setDescription] = useState("");
@@ -41,6 +44,7 @@ function ExpensePage({ user, categories }) {
         }));
       } catch (error) {
         console.error("Error fetching monthly spending", error);
+        toast.error("Failed to fetch monthly spending.");
       }
     };
 
@@ -56,6 +60,7 @@ function ExpensePage({ user, categories }) {
         setExpenses(response.data);
       } catch (error) {
         console.error("Error fetching monthly expenses", error);
+        toast.error("Failed to fetch expenses for this month.");
       }
     };
 
@@ -85,9 +90,11 @@ function ExpensePage({ user, categories }) {
       if (editMode) {
         // Send a PUT request to update the expense
         await apiClient.put(`${API_BASE_URL}/expenses/${editExpenseId}`, expenseData);
+        toast.success("Expense updated successfully!");
       } else {
         // Send a POST request to add a new expense
         await apiClient.post(`${API_BASE_URL}/expenses`, expenseData);
+        toast.success("Expense added successfully!");
       }
 
       // Refresh the expense list after adding or editing
@@ -108,6 +115,7 @@ function ExpensePage({ user, categories }) {
       setEditExpenseId(null);
     } catch (error) {
       console.error("Error adding/editing expense", error);
+      toast.error("Error adding or editing the expense.");
     }
   };
 
@@ -131,13 +139,13 @@ function ExpensePage({ user, categories }) {
           `${API_BASE_URL}/expenses?userId=${userId}`
         );
         setExpenses(response.data);
-        alert("Expense deleted successfully!");
+        toast.success("Expense deleted successfully!");
       } catch (error) {
         console.error("Error deleting expense", error);
-        alert("Error deleting expense: " + error.message);
+        toast.error("Error deleting expense.");
       }
     } else {
-      console.log("Delete action was canceled.");
+      toast.info("Delete action canceled.");
     }
   };
 
@@ -148,30 +156,32 @@ function ExpensePage({ user, categories }) {
 
   return (
     <div className="expense-container">
-    {/* Left side: Monthly Spending and Form */}
-    <div className="expense-left">
-      <MonthlySpending spending={monthlySpending[filterDate]} />
-      <ExpenseForm
-        onSubmit={handleAddOrEditExpense}
-        editMode={editMode}
-        categories={categories}
-        expense={currentExpense}
-        userCurrency={user?.preferredCurrency}
-      />
+      {/* Left side: Monthly Spending and Form */}
+      <div className="expense-left">
+        <MonthlySpending spending={monthlySpending[filterDate]} />
+        <ExpenseForm
+          onSubmit={handleAddOrEditExpense}
+          editMode={editMode}
+          categories={categories}
+          expense={currentExpense}
+          userCurrency={user?.preferredCurrency}
+        />
+      </div>
+
+      {/* Right side: Expense List */}
+      <div className="expense-right">
+        <ExpenseFilter filterDate={filterDate} onFilterChange={setFilterDate} />
+        <ExpenseList
+          expenses={filteredExpenses}
+          onEdit={handleEditClick}
+          onDelete={handleDeleteClick}
+          userCurrency={user?.preferredCurrency}
+        />
+      </div>
+
+      {/* ToastContainer for notifications */}
+      <ToastContainer />
     </div>
-  
-    {/* Right side: Expense List */}
-    <div className="expense-right">
-      <ExpenseFilter filterDate={filterDate} onFilterChange={setFilterDate} />
-      <ExpenseList
-        expenses={filteredExpenses}
-        onEdit={handleEditClick}
-        onDelete={handleDeleteClick}
-        userCurrency={user?.preferredCurrency}
-      />
-    </div>
-  </div>
-  
   );
 }
 

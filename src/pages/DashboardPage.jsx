@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from "react";
-import apiClient from  "../services/ApiInterceptor"; // Import the centralized API client
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import apiClient from "../services/ApiInterceptor";
 import "./DashboardPage.css";
+import TokenManager from "../services/TokenManager";
 
 function DashboardPage() {
     const [users, setUsers] = useState([]);
     const [error, setError] = useState(null);
 
-    // Fetch all users
     useEffect(() => {
         const fetchUsers = async () => {
             try {
@@ -20,15 +22,34 @@ function DashboardPage() {
         fetchUsers();
     }, []);
 
-    // Handle user deletion
     const handleDeleteUser = async (userId) => {
         if (!window.confirm("Are you sure you want to delete this user?")) return;
 
+        // Check if the user is trying to delete themselves
+        if (userId === TokenManager.getUserId()) {
+            toast.error("You cannot delete your own account.", {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+            });
+            return;
+        }
+
         try {
             await apiClient.delete(`/user/${userId}`);
-            setUsers(users.filter(user => user.id !== userId)); // Update the UI
+            setUsers(users.filter(user => user.id !== userId));
+            toast.success("User deleted successfully.", {
+                position: "top-right",
+                autoClose: 3000,
+            });
         } catch (err) {
-            setError("Failed to delete user. Please try again.");
+            toast.error("Failed to delete user. Please try again.", {
+                position: "top-right",
+                autoClose: 3000,
+            });
         }
     };
 
@@ -36,6 +57,9 @@ function DashboardPage() {
         <div className="dashboard-container">
             <h1 className="dashboard-title">Admin Dashboard</h1>
             {error && <p className="dashboard-error">{error}</p>}
+
+            <ToastContainer /> {/* Add ToastContainer for notifications */}
+
             <ul className="user-list">
                 {users.map(user => (
                     <li key={user.id} className="user-item">

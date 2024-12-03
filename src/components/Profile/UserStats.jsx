@@ -8,12 +8,7 @@ function Stats({ user, monthlySpending, filterDate }) {
     : 0;
 
   // Determine the color based on the percentage spent
-  let progressColor = "#00bcd4"; // Default to blue
-  if (percentageSpent >= 80) {
-    progressColor = "#f44336"; // Red
-  } else if (percentageSpent >= 50) {
-    progressColor = "#ffeb3b"; // Yellow
-  }
+  let progressColor = "#00000"; // Default to blue
 
   return (
     <div className="ProfilePage__statsContainer">

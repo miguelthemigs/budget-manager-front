@@ -1,5 +1,24 @@
 import { jwtDecode } from 'jwt-decode';
+/**
+- Session Storage: 
+no theft of tokens, bc its cleared when the tab is closed
+no data sent every http request
 
+- Local Storage:
+persists after tab is closed
+tokens has to be explicitly cleared
+prone to XSS attacks
+no data sent every http request
+
+- Cookies:
+persist across sessions
+more complex
+sent in every http request, making it prone to CSRF attacks
+
+As I am prioritizing security because we are gonna have to do a security report, 
+the most secure and simpler way is to use session storage, as I don't need to worry about token theft
+and XSS and CSRF attacks.
+ */
 const TokenManager = {
     getAccessToken: () => sessionStorage.getItem("accessToken"),
     getClaims: () => {

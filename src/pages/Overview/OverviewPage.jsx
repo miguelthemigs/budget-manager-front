@@ -184,9 +184,15 @@ function OverviewPage() {
                 `${name}: ${(percent * 100).toFixed(0)}%`
               }
             >
-              {categoryData.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={getCategoryColor(entry.name)} />
-              ))}
+              {categoryData.map((entry, index) => {
+                console.log("Category:", entry.name); // Log category name for debugging
+                return (
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={getCategoryColor(entry.name)}
+                  />
+                );
+              })}
             </Pie>
             <Tooltip />
           </PieChart>
@@ -198,14 +204,32 @@ function OverviewPage() {
 
 // Optional: Customize colors based on categories
 const getCategoryColor = (name) => {
-  const colors = {
-    Groceries: "#ff007f",
-    Transportation: "#32cd32",
-    Entertainment: "#ffa500",
-    Utilities: "#008b8b",
-    Other: "#8a2be2",
+ // Normalize the category name (convert to uppercase and trim spaces)
+ const normalizedCategory = name.trim().toUpperCase();
+
+ const colors = {
+  GROCERIES: "#4C9EBF",        // Muted Blue
+  SHOPPING: "#F1A533",         // Soft Yellow-Orange
+  ENTERTAINMENT: "#7F5AA2",    // Muted Purple
+  HEALTH: "#4F9A7B",           // Muted Green
+  TRANSFERS: "#6B8E8C",        // Dusty Teal
+  RESTAURANTS: "#FF6F61",      // Coral Red
+  TRAVEL: "#2E91B7",           // Deep Sky Blue
+  TRANSPORTATION: "#3F8C4F",   // Dark Olive Green
+  UTILITIES: "#6A6A6A",        // Dark Gray
+  SERVICES: "#9A88C4",         // Soft Lavender
+  INVESTMENTS: "#3F4A6D",      // Slate Blue
+  DONATION: "#8B9F30",         // Olive Green
+  SALARY: "#6A4E3D",           // Earthy Brown
+  GIFTS: "#F1C40F",            // Sunflower Yellow
+  INSURANCE: "#5D6D7E",        // Muted Steel Blue
+  SUBSCRIPTIONS: "#7F8C8D",    // Slate Gray
+  REFUND: "#2980B9",           // Bright Blue
+  OTHER: "#9B59B6",            // Amethyst Purple          
   };
-  return colors[name] || "#8884d8"; // Default color if no match
+  
+  
+ return colors[normalizedCategory] || "#8884d8"; // Default color if no match
 };
 
 export default OverviewPage;

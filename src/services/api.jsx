@@ -27,6 +27,7 @@ export const fetchCategoryBudgets = async (userId) => {
 
 
 export const fetchMonthlySpending = async (userId, filterDate) => {
+    // Total expenses for selected month
   try {
     const response = await apiClient.get(`${API_BASE_URL}/expenses/monthly`, {
       params: { userId, month: filterDate },
@@ -47,8 +48,8 @@ export const fetchCategorySpending = async (userId, categoryBudgets, year, month
         params: {
           userId,
           category: budget.category,
-          year,
-          month,
+          year: year,
+          month: month,
         },
       });
       updatedSpending[budget.category] = response.data;

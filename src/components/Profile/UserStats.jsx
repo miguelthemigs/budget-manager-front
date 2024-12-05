@@ -10,9 +10,15 @@ function Stats({ user, monthlySpending, filterDate }) {
   // Determine the color based on the percentage spent
   let progressColor = "#00000"; // Default to blue
 
+  const currentMonth = new Date();
+  const monthName = currentMonth.toLocaleString('default', { month: 'long' });
+  const year = currentMonth.getFullYear();
+  const formattedMonth = `${monthName} ${year}`;
+
   return (
     <div className="ProfilePage__statsContainer">
       <h3 className="ProfilePage__statsHeading">Spending Statistics</h3>
+      <h3 className="ProfilePage__statsItem">{formattedMonth}</h3>
       <div className="ProfilePage__statsInfo">
         <p className="ProfilePage__statItem">
           <span className="ProfilePage__label">Monthly Budget:</span> {user.monthlyBudget} {user.preferredCurrency}

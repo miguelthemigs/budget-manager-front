@@ -11,7 +11,7 @@ function NavBar() {
     const links = [
         { id: 1, path: "/", text: "Expense Tracker" },
         { id: 2, path: "/profile", text: "Profile" },   
-        { id: 4, path: "/Overview", text: "Overview"},
+        { id: 4, path: "/overview", text: "Overview"},
         { id: 5, path: "/demo", text: "Demo overview" },
     ];
 

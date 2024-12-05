@@ -1,18 +1,12 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
-import { NavLink } from "react-router-dom"; // Use NavLink for navigation
-import { FiSettings } from "react-icons/fi"; // Import the settings icon from react-icons
 import "./ProfilePage.css"; // Import the CSS file
 import TokenManager from "../../services/TokenManager";
-import apiClient from "../../services/ApiInterceptor";
 import Stats from "../../components/Profile/UserStats";
 import UserInfo from "../../components/Profile/UserInfo";
 import CategoryWidgets from "../../components/Profile/CategoryWidgets";
 import Header from "../../components/Profile/ProfileHeader";
-
-
-function ProfilePage({onLogout}) {
-  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+import { fetchUserData, fetchCategoryBudgets, fetchMonthlySpending, fetchCategorySpending } from "../../services/api"; // Import API functions
+function ProfilePage({ onLogout }) {
   const [user, setUser] = useState(null);
   const [monthlySpending, setMonthlySpending] = useState({});
   const [categoryBudgets, setCategoryBudgets] = useState([]);
@@ -26,81 +20,55 @@ function ProfilePage({onLogout}) {
 
   // Fetch user data directly from API
   useEffect(() => {
-    const fetchUserData = async () => {
+    const fetchData = async () => {
       try {
-        const response = await apiClient.get(`${API_BASE_URL}/user/${userId}`);
-        setUser(response.data);
+        const userData = await fetchUserData(userId);
+        setUser(userData);
       } catch (error) {
         console.error("Error fetching user data:", error);
       }
     };
-    fetchUserData();
+    fetchData();
   }, [userId]);
 
   // Fetch category budgets directly from the API
   useEffect(() => {
-    const fetchCategoryBudgets = async () => {
+    const fetchData = async () => {
       try {
-        const response = await apiClient.get(
-          `${API_BASE_URL}/category-budgets/user/${userId}`
-        );
-        setCategoryBudgets(response.data);
+        const budgets = await fetchCategoryBudgets(userId);
+        setCategoryBudgets(budgets);
       } catch (error) {
         console.error("Error fetching category budgets:", error);
       }
     };
-    fetchCategoryBudgets();
+    fetchData();
   }, [userId]);
 
   // Fetch monthly spending for the selected month directly from the API
   useEffect(() => {
-    const fetchMonthlySpending = async () => {
+    const fetchData = async () => {
       try {
-        const response = await apiClient.get(
-          `${API_BASE_URL}/expenses/monthly?userId=${userId}&month=${filterDate}`
-        );
+        const spending = await fetchMonthlySpending(userId, filterDate);
         setMonthlySpending((prev) => ({
           ...prev,
-          [filterDate]: response.data || 0, // Store spending for the specific month
+          [filterDate]: spending || 0,
         }));
       } catch (error) {
         console.error("Error fetching monthly spending", error);
       }
     };
-    fetchMonthlySpending();
+    fetchData();
   }, [filterDate, userId]);
 
   // Fetch category spending directly from the API for each category
   useEffect(() => {
-    const fetchCategorySpending = async () => {
-      const updatedSpending = {};
-      for (const budget of categoryBudgets) {
-        try {
-          const response = await apiClient.get(
-            `${API_BASE_URL}/expenses/categoryBudget`,
-            {
-              params: {
-                userId,
-                category: budget.category,
-                year: new Date().getFullYear(),
-                month: new Date().getMonth() + 1,
-              },
-            }
-          );
-          updatedSpending[budget.category] = response.data; // Store spending by category
-        } catch (error) {
-          console.error(
-            `Error fetching spending for category ${budget.category}:`,
-            error
-          );
-        }
+    const fetchData = async () => {
+      if (categoryBudgets.length > 0) {
+        const spending = await fetchCategorySpending(userId, categoryBudgets, new Date().getFullYear(), new Date().getMonth() + 1);
+        setCategorySpending(spending);
       }
-      setCategorySpending(updatedSpending); // Update state
     };
-
-    if (categoryBudgets.length > 0) {
-      fetchCategorySpending();
-    }
+    fetchData();
   }, [categoryBudgets, userId]);
 
   const percentageSpent =

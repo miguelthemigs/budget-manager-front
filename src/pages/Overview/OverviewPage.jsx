@@ -1,7 +1,19 @@
 import React, { useState, useEffect } from "react";
-import { BarChart, Bar, XAxis, YAxis, Tooltip, PieChart, Pie, Cell } from "recharts";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  PieChart,
+  Pie,
+  Cell,
+} from "recharts";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import "./OverviewPage.css"; // Add custom styles
-
+import { fetchMonthlySpending } from "../../services/api";
+import TokenManager from "../../services/TokenManager";
 
 // Sample data for spending
 const spendingData = [
@@ -11,7 +23,6 @@ const spendingData = [
   { name: "22-28", amount: 150 },
 ];
 
-
 // Data for category breakdown
 const categoryData = [
   { name: "Transfers", value: 253, color: "#007aff" },
@@ -20,7 +31,39 @@ const categoryData = [
 ];
 
 function OverviewPage() {
+  const userId = TokenManager.getUserId();
+  const [monthlySpending, setMonthlySpending] = useState({});
   const [activeGraph, setActiveGraph] = useState("bar"); // Toggle between graphs
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [filterDate, setFilterDate] = useState(() => {
+    const now = new Date();
+    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+  });
+
+  useEffect(() => {
+    // Update filterDate when selectedDate changes
+    const year = selectedDate.getFullYear();
+    const month = String(selectedDate.getMonth() + 1).padStart(2, "0");
+    setFilterDate(`${year}-${month}`);
+  }, [selectedDate]);
+
+  useEffect(() => {
+    const getMonthlySpending = async () => {
+      try {
+        const spending = await fetchMonthlySpending(userId, filterDate);
+        setMonthlySpending((prev) => ({
+          ...prev,
+          [filterDate]: spending || 0,
+        }));
+      } catch (error) {
+        console.error("Error fetching monthly spending:", error);
+      }
+    };
+
+    if (userId) {
+      getMonthlySpending();
+    }
+  }, [userId, filterDate]);
 
   // Graph rendering based on activeGraph
   const renderGraph = () => {
@@ -43,7 +86,9 @@ function OverviewPage() {
             cy="50%"
             outerRadius={100}
             fill="#8884d8"
-            label={({ name, percent }) => `${name} (${(percent * 100).toFixed(0)}%)`}
+            label={({ name, percent }) =>
+              `${name} (${(percent * 100).toFixed(0)}%)`
+            }
           >
             {categoryData.map((entry, index) => (
               <Cell key={`cell-${index}`} fill={entry.color} />
@@ -59,7 +104,22 @@ function OverviewPage() {
   return (
     <div className="OverviewPage">
       <div className="OverviewHeader">
-        <h2>Spent this month: </h2>
+        <h2>
+          Spent this month:{" "}
+          {typeof monthlySpending[filterDate] === "number"
+            ? monthlySpending[filterDate]
+            : 0}{" "}
+          €
+        </h2>
+        <div className="month-picker">
+          <label>Select Month: </label>
+          <DatePicker
+            selected={selectedDate}
+            onChange={(date) => setSelectedDate(date)}
+            dateFormat="MM/yyyy"
+            showMonthYearPicker // Enable month-year picker
+          />
+        </div>
         <div className="graph-switcher">
           <button onClick={() => setActiveGraph("bar")}>Bar Graph</button>
           <button onClick={() => setActiveGraph("pie")}>Pie Chart</button>
@@ -71,7 +131,8 @@ function OverviewPage() {
         <ul>
           {categoryData.map((item) => (
             <li key={item.name}>
-              <span style={{ color: item.color }}>●</span> {item.name}: €{item.value} ({((item.value / 356) * 100).toFixed(1)}%)
+              <span style={{ color: item.color }}>●</span> {item.name}: €{item.value} (
+              {((item.value / 356) * 100).toFixed(1)}%)
             </li>
           ))}
         </ul>

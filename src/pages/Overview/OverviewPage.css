@@ -2,11 +2,12 @@
     background-color: #2a2a2a;
     color: #fff;
     font-family: Arial, sans-serif;
-    padding: 20px;
-    max-width: 500px;
+    padding: 40px;
+    max-width: 1200px; /* Adjusted for larger layout */
     margin: 0 auto;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    width: 100%;
   }
   
   .OverviewHeader {
@@ -14,40 +15,7 @@
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
-  }
-  
-  .graph-switcher button {
-    background-color: #1e1e1e;
-    color: #fff;
-    border: 1px solid #444;
-    border-radius: 4px;
-    padding: 5px 10px;
-    margin-left: 5px;
-    cursor: pointer;
-  }
-  
-  .graph-switcher button:hover {
-    background-color: #333;
-  }
-  
-  .graph-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 20px 0;
-  }
-  
-  .category-breakdown {
-    margin-top: 20px;
-  }
-  
-  .category-breakdown ul {
-    list-style-type: none;
-    padding: 0;
-  }
-  
-  .category-breakdown li {
-    margin: 5px 0;
+    flex-wrap: wrap; /* Allows wrapping on smaller screens */
   }
   
   .month-picker {
@@ -60,10 +28,8 @@
   .month-picker label {
     margin-right: 10px;
     font-weight: bold;
-    color: #555;
   }
   
-  /* DatePicker Input Field */
   .react-datepicker-wrapper,
   .react-datepicker__input-container {
     width: auto;
@@ -148,13 +114,40 @@
     border-color: #0056cc;
   }
   
+  /* Graph container */
+  .graphs-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 20px; /* Space between charts */
+    margin: 20px 0;
+  }
+  
+  .bar-chart,
+  .pie-chart {
+    flex: 1; /* Equal width for charts */
+    max-width: 50%; /* Limit to half the container width */
+  }
+  
   /* Mobile Friendly */
   @media (max-width: 768px) {
-    .react-datepicker-wrapper {
-      width: 100%;
+    .OverviewPage {
+      padding: 15px;
     }
   
-    .react-datepicker__input-container input {
-      width: 100%;
+    .OverviewHeader {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  
+    .graphs-container {
+      flex-direction: column;
+      align-items: center;
+    }
+  
+    .bar-chart,
+    .pie-chart {
+      max-width: 100%; /* Full width for charts on smaller screens */
     }
   }
+  

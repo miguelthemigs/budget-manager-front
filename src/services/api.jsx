@@ -25,6 +25,18 @@ export const fetchCategoryBudgets = async (userId) => {
   }
 };
 
+export const fetchMonthlyExpenses = async (userId, month, year) => {
+    try {
+        const response = await apiClient.get(`${API_BASE_URL}/expenses/perMonth`, {
+            params: { userId, month, year }
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching monthly expenses", error);
+        throw error;
+    }
+};
+
 
 export const fetchMonthlySpending = async (userId, filterDate) => {
     // Total expenses for selected month

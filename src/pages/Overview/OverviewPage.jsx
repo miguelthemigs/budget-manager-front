@@ -12,42 +12,118 @@ import {
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "./OverviewPage.css"; // Add custom styles
-import { fetchMonthlySpending } from "../../services/api";
+import { fetchMonthlySpending, fetchMonthlyExpenses } from "../../services/api";
 import TokenManager from "../../services/TokenManager";
-
-// Sample data for spending
-const spendingData = [
-  { name: "1-7", amount: 356 },
-  { name: "8-14", amount: 175 },
-  { name: "15-21", amount: 200 },
-  { name: "22-28", amount: 150 },
-];
-
-// Data for category breakdown
-const categoryData = [
-  { name: "Transfers", value: 253, color: "#007aff" },
-  { name: "Groceries", value: 81, color: "#32cd32" },
-  { name: "Other", value: 22, color: "#ff4500" },
-];
 
 function OverviewPage() {
   const userId = TokenManager.getUserId();
   const [monthlySpending, setMonthlySpending] = useState({});
-  const [activeGraph, setActiveGraph] = useState("bar"); // Toggle between graphs
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const [expenses, setExpenses] = useState([]);
+  const [categoryData, setCategoryData] = useState([]);
+  const [periodData, setPeriodData] = useState([]);
   const [filterDate, setFilterDate] = useState(() => {
     const now = new Date();
     return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
   });
 
   useEffect(() => {
-    // Update filterDate when selectedDate changes
     const year = selectedDate.getFullYear();
     const month = String(selectedDate.getMonth() + 1).padStart(2, "0");
     setFilterDate(`${year}-${month}`);
   }, [selectedDate]);
 
   useEffect(() => {
+    if (!userId || !filterDate) return;
+
+    const getMonthlyExpenses = async () => {
+      try {
+        const response = await fetchMonthlyExpenses(
+          userId,
+          filterDate.split("-")[1],
+          filterDate.split("-")[0]
+        );
+        if (response && Array.isArray(response)) {
+          const categorizedExpenses = categorizeByCategory(response);
+          setCategoryData(categorizedExpenses);
+          const periodExpenses = categorizeByPeriod(response);
+          setPeriodData(periodExpenses);
+        } else {
+          console.error("Invalid response data:", response);
+        }
+      } catch (error) {
+        console.error("Error fetching monthly expenses", error);
+      }
+    };
+
+    getMonthlyExpenses();
+  }, [userId, filterDate]);
+
+  // Categorize expenses based on categories (e.g., groceries, transportation, etc.)
+  const categorizeByCategory = (expenses) => {
+    const categorized = {};
+
+    expenses.forEach((expense) => {
+      if (expense && expense.category) {
+        if (!categorized[expense.category]) {
+          categorized[expense.category] = 0;
+        }
+        categorized[expense.category] += expense.amount || 0;
+      } else {
+        console.warn("Skipping invalid expense:", expense);
+      }
+    });
+
+    // Convert the categorized data to an array format that Recharts expects
+    return Object.keys(categorized).map((category) => ({
+      name: category,
+      amount: categorized[category],
+    }));
+  };
+
+  // Categorize expenses by the 5 periods of the month (1-7, 8-14, 15-21, 22-28, 29-31)
+  const categorizeByPeriod = (expenses) => {
+    const categorized = {
+      "1-7": 0,
+      "8-14": 0,
+      "15-21": 0,
+      "22-28": 0,
+      "29-31": 0,
+    };
+
+    expenses.forEach((expense) => {
+      if (expense && expense.date) {
+        const date = new Date(expense.date);
+        const day = date.getDate();
+
+        if (day >= 1 && day <= 7) {
+          categorized["1-7"] += expense.amount || 0;
+        } else if (day >= 8 && day <= 14) {
+          categorized["8-14"] += expense.amount || 0;
+        } else if (day >= 15 && day <= 21) {
+          categorized["15-21"] += expense.amount || 0;
+        } else if (day >= 22 && day <= 28) {
+          categorized["22-28"] += expense.amount || 0;
+        } else {
+          categorized["29-31"] += expense.amount || 0;
+        }
+      } else {
+        console.warn("Skipping invalid expense:", expense);
+      }
+    });
+
+    return [
+      { name: "1-7", amount: categorized["1-7"] },
+      { name: "8-14", amount: categorized["8-14"] },
+      { name: "15-21", amount: categorized["15-21"] },
+      { name: "22-28", amount: categorized["22-28"] },
+      { name: "29-31", amount: categorized["29-31"] },
+    ];
+  };
+
+  useEffect(() => {
+    if (!userId || !filterDate) return;
+
     const getMonthlySpending = async () => {
       try {
         const spending = await fetchMonthlySpending(userId, filterDate);
@@ -60,46 +136,11 @@ function OverviewPage() {
       }
     };
 
-    if (userId) {
-      getMonthlySpending();
-    }
+    getMonthlySpending();
   }, [userId, filterDate]);
 
-  // Graph rendering based on activeGraph
-  const renderGraph = () => {
-    if (activeGraph === "bar") {
-      return (
-        <BarChart width={400} height={300} data={spendingData}>
-          <XAxis dataKey="name" stroke="#ccc" />
-          <YAxis stroke="#ccc" />
-          <Tooltip />
-          <Bar dataKey="amount" fill="#ff007f" />
-        </BarChart>
-      );
-    } else if (activeGraph === "pie") {
-      return (
-        <PieChart width={400} height={300}>
-          <Pie
-            data={categoryData}
-            dataKey="value"
-            cx="50%"
-            cy="50%"
-            outerRadius={100}
-            fill="#8884d8"
-            label={({ name, percent }) =>
-              `${name} (${(percent * 100).toFixed(0)}%)`
-            }
-          >
-            {categoryData.map((entry, index) => (
-              <Cell key={`cell-${index}`} fill={entry.color} />
-            ))}
-          </Pie>
-          <Tooltip />
-        </PieChart>
-      );
-    }
-    return null;
-  };
+  // Calculate total spending for the month (for percentage calculation)
+  const totalSpending = categoryData.reduce((total, category) => total + category.amount, 0);
 
   return (
     <div className="OverviewPage">
@@ -117,28 +158,54 @@ function OverviewPage() {
             selected={selectedDate}
             onChange={(date) => setSelectedDate(date)}
             dateFormat="MM/yyyy"
-            showMonthYearPicker // Enable month-year picker
+            showMonthYearPicker
           />
         </div>
-        <div className="graph-switcher">
-          <button onClick={() => setActiveGraph("bar")}>Bar Graph</button>
-          <button onClick={() => setActiveGraph("pie")}>Pie Chart</button>
-        </div>
       </div>
-      <div className="graph-container">{renderGraph()}</div>
-      <div className="category-breakdown">
-        <h3>By Category</h3>
-        <ul>
-          {categoryData.map((item) => (
-            <li key={item.name}>
-              <span style={{ color: item.color }}>●</span> {item.name}: €{item.value} (
-              {((item.value / 356) * 100).toFixed(1)}%)
-            </li>
-          ))}
-        </ul>
+      <div className="graphs-container">
+        <div className="bar-chart">
+          <BarChart width={570} height={400} data={periodData}>
+            <XAxis dataKey="name" stroke="#ccc" />
+            <YAxis stroke="#ccc" />
+            <Tooltip formatter={(value) => `${value} €`} />
+            <Bar dataKey="amount" fill="#ff007f" />
+          </BarChart>
+        </div>
+        <div className="pie-chart">
+          <PieChart width={650} height={400}>
+            <Pie
+              data={categoryData}
+              dataKey="amount"
+              cx="50%"
+              cy="50%"
+              outerRadius={120}
+              fill="#8884d8"
+              label={({ name, percent }) =>
+                `${name}: ${(percent * 100).toFixed(0)}%`
+              }
+            >
+              {categoryData.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={getCategoryColor(entry.name)} />
+              ))}
+            </Pie>
+            <Tooltip />
+          </PieChart>
+        </div>
       </div>
     </div>
   );
 }
+
+// Optional: Customize colors based on categories
+const getCategoryColor = (name) => {
+  const colors = {
+    Groceries: "#ff007f",
+    Transportation: "#32cd32",
+    Entertainment: "#ffa500",
+    Utilities: "#008b8b",
+    Other: "#8a2be2",
+  };
+  return colors[name] || "#8884d8"; // Default color if no match
+};
 
 export default OverviewPage;

@@ -1,0 +1,20 @@
+.GraphDemoPage {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+  }
+  
+  .GraphDemoPage h1 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .GraphDemoPage section {
+    margin: 20px 0;
+    text-align: center;
+  }
+  
+  .GraphDemoPage svg {
+    margin: auto;
+    display: block;
+  }
+  

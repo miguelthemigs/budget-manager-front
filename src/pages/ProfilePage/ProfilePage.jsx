@@ -10,6 +10,7 @@ import UserInfo from "../../components/Profile/UserInfo";
 import CategoryWidgets from "../../components/Profile/CategoryWidgets";
 import Header from "../../components/Profile/ProfileHeader";
 
+
 function ProfilePage({onLogout}) {
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   const [user, setUser] = useState(null);

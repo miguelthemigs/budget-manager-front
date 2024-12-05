@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import styles from "./NavBar.module.css";
 import TokenManager from "../../services/TokenManager";
+import { path } from "d3";
 
 function NavBar() {
     const [isOpen, setIsOpen] = useState(false); 
@@ -9,7 +10,9 @@ function NavBar() {
 
     const links = [
         { id: 1, path: "/", text: "Expense Tracker" },
-        { id: 2, path: "/profile", text: "Profile" },      
+        { id: 2, path: "/profile", text: "Profile" },   
+        { id: 4, path: "/Overview", text: "Overview"},
+        { id: 5, path: "/demo", text: "Demo overview" },
     ];
 
     if (isAdmin) {

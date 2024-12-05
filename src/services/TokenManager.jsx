@@ -15,8 +15,8 @@ persist across sessions
 more complex
 sent in every http request, making it prone to CSRF attacks
 
-As I am prioritizing security because we are gonna have to do a security report, 
-the most secure and simpler way is to use session storage, as I don't need to worry about token theft
+As I am prioritizing security: we are gonna have to do a security report, 
+the most secure and simpler way I found is to use session storage, as I don't need to worry about token theft
 and XSS and CSRF attacks.
  */
 const TokenManager = {

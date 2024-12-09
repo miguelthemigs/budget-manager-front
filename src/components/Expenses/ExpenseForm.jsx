@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import "../../pages/Pages.css"; // Import the CSS file
 
 function ExpenseForm({ onSubmit, editMode, categories, expense, userCurrency }) {
     const [category, setCategory] = useState(expense?.category || "");

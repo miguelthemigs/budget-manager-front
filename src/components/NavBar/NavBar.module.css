@@ -103,3 +103,14 @@ a:hover {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
   }
 }
+
+.logoContainer {
+  display: flex;
+}
+
+.logo {
+  height: 50px; /* Adjust as needed */
+  width: auto;
+  object-fit: contain;
+  cursor: grab;
+}

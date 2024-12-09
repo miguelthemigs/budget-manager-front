@@ -12,15 +12,15 @@ import {
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "./OverviewPage.css"; // Add custom styles
-import { fetchMonthlySpending, fetchMonthlyExpenses } from "../../services/api";
+import { fetchMonthlySpending, fetchMonthlyExpenses, fetchUserData } from "../../services/api";
 import TokenManager from "../../services/TokenManager";
 
 function OverviewPage() {
   const userId = TokenManager.getUserId();
   const [monthlySpending, setMonthlySpending] = useState({});
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [expenses, setExpenses] = useState([]);
   const [categoryData, setCategoryData] = useState([]);
+  const [preferredCurrency, setPreferredCurrency] = useState("");
   const [periodData, setPeriodData] = useState([]);
   const [filterDate, setFilterDate] = useState(() => {
     const now = new Date();
@@ -59,6 +59,20 @@ function OverviewPage() {
     getMonthlyExpenses();
   }, [userId, filterDate]);
 
+  useEffect(() => {
+    if (!userId) return;
+    const getPreferredCurrency = async () => {
+      try {
+        const userData = await fetchUserData(userId);
+        setPreferredCurrency(userData.preferredCurrency);
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+
+    getPreferredCurrency();
+  }, [userId]);
+
   // Categorize expenses based on categories (e.g., groceries, transportation, etc.)
   const categorizeByCategory = (expenses) => {
     const categorized = {};
@@ -81,7 +95,7 @@ function OverviewPage() {
     }));
   };
 
-  // Categorize expenses by the 5 periods of the month (1-7, 8-14, 15-21, 22-28, 29-31)
+  // Categorize expenses by the 5 periods of the month 
   const categorizeByPeriod = (expenses) => {
     const categorized = {
       "1-7": 0,
@@ -150,7 +164,7 @@ function OverviewPage() {
           {typeof monthlySpending[filterDate] === "number"
             ? monthlySpending[filterDate]
             : 0}{" "}
-          €
+            {preferredCurrency}
         </h2>
         <div className="month-picker">
           <label>Select Month: </label>
@@ -164,14 +178,16 @@ function OverviewPage() {
       </div>
       <div className="graphs-container">
         <div className="bar-chart">
-          <BarChart width={570} height={400} data={periodData}>
-            <XAxis dataKey="name" stroke="#ccc" />
-            <YAxis stroke="#ccc" />
-            <Tooltip formatter={(value) => `${value} €`} />
+        <h3>Weekly Spending</h3>
+          <BarChart width={570} height={450} data={periodData}>
+          <XAxis dataKey="name" stroke="#ccc" label={{ value: "Days of the Month", position: "insideBottom", offset: -3 }} />
+          <YAxis stroke="#ccc" label={{ value: `Value (${preferredCurrency})`, angle: -90, position: "insideLeft" }} />
+            <Tooltip formatter={(value) => `${value} ${preferredCurrency}`} />
             <Bar dataKey="amount" fill="#ff007f" />
           </BarChart>
         </div>
         <div className="pie-chart">
+          <h3>Spending by Category</h3>
           <PieChart width={650} height={400}>
             <Pie
               data={categoryData}

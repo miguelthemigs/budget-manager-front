@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import styles from "./NavBar.module.css";
 import TokenManager from "../../services/TokenManager";
-import { path } from "d3";
+import logo from "../../assets/logo.png";
+
 
 function NavBar() {
     const [isOpen, setIsOpen] = useState(false); 
@@ -25,12 +26,15 @@ function NavBar() {
 
     return (
         <header className={styles.header}>
+            {/* Add the logo */}
+           
             <button onClick={toggleNavbar} className={styles.toggleButton}>
                 <div className={styles.bar}></div>
                 <div className={styles.bar}></div>
                 <div className={styles.bar}></div>
             </button>
             <nav className={`${styles.navBar} ${isOpen ? styles.open : ""}`}>
+            <img src={logo} alt="Budget Manager Logo" className={styles.logo} />
                 <ul className={styles.menuNav}>
                     {links.map(link => (
                         <li key={link.id}>
@@ -40,7 +44,9 @@ function NavBar() {
                         </li>
                     ))}
                 </ul>
+                
             </nav>
+            
         </header>
     );
 }

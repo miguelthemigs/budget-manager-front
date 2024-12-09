@@ -6,8 +6,10 @@ import ExpenseFilter from "../components/Expenses/ExpenseFilter";
 import ExpenseList from "../components/Expenses/ExpenseList";
 import TokenManager from "../services/TokenManager";
 import apiClient from "../services/ApiInterceptor";
+import { fetchMonthlySpending, fetchMonthlyExpenses } from "../services/api";
 import { toast, ToastContainer } from "react-toastify"; // Import Toastify
 import "react-toastify/dist/ReactToastify.css"; // Import Toastify CSS
+import logo from "../assets/logo.png";
 
 function ExpensePage({ user, categories }) {
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -33,39 +35,38 @@ function ExpensePage({ user, categories }) {
   });
 
   useEffect(() => {
-    const fetchMonthlySpending = async () => {
+    const fetchData = async () => {
       try {
-        const response = await apiClient.get(
-          `${API_BASE_URL}/expenses/monthly?userId=${userId}&month=${filterDate}`
-        );
+        const response = await fetchMonthlySpending(userId, filterDate);
         setMonthlySpending((prev) => ({
           ...prev,
-          [filterDate]: response.data || 0, // Store spending for the specific month
+          [filterDate]: response || 0,
         }));
-      } catch (error) {
+      }
+      catch (error) {
         console.error("Error fetching monthly spending", error);
         toast.error("Failed to fetch monthly spending.");
       }
+      
     };
-
-    fetchMonthlySpending();
+    fetchData();
   }, [filterDate, userId]);
 
   useEffect(() => {
-    const fetchMonthlyExpenses = async () => {
+    const fetchData = async () => {
       try {
-        const response = await apiClient.get(
-          `${API_BASE_URL}/expenses/perMonth?userId=${userId}&month=${filterDate.split("-")[1]}&year=${filterDate.split("-")[0]}`
-        );
-        setExpenses(response.data);
+        const data = await fetchMonthlyExpenses(userId, filterDate.split("-")[1], filterDate.split("-")[0]);
+        setExpenses(data || []); // Fallback to an empty array if data is undefined
       } catch (error) {
         console.error("Error fetching monthly expenses", error);
         toast.error("Failed to fetch expenses for this month.");
+        setExpenses([]); // Clear expenses in case of an error
       }
     };
-
-    fetchMonthlyExpenses();
+  
+    fetchData();
   }, [filterDate, userId]);
+  
 
   // Filter expenses by the current month
   const filteredExpenses = expenses.filter((expense) => {
@@ -158,6 +159,7 @@ function ExpensePage({ user, categories }) {
     <div className="expense-container">
       {/* Left side: Monthly Spending and Form */}
       <div className="expense-left">
+      <img src={logo} alt="Budget Manager Logo" className="expense-logo" />
         <MonthlySpending spending={monthlySpending[filterDate]} />
         <ExpenseForm
           onSubmit={handleAddOrEditExpense}

@@ -37,7 +37,6 @@ export const fetchMonthlyExpenses = async (userId, month, year) => {
     }
 };
 
-
 export const fetchMonthlySpending = async (userId, filterDate) => {
     // Total expenses for selected month
   try {

@@ -210,7 +210,7 @@ function OverviewPage() {
                 );
               })}
             </Pie>
-            <Tooltip />
+            <Tooltip formatter={(value) => `${value} ${preferredCurrency}`}/>
           </PieChart>
         </div>
       </div>

@@ -1,5 +1,5 @@
 
-describe('Add Expense', () => {
+describe('Add and Delete Expense', () => {
   it('logs in, waits for requests, and adds an expense', () => {
     // Intercept the necessary API calls
     cy.intercept('GET', '**/expenses/monthly*').as('getMonthlyExpenses');
@@ -30,7 +30,7 @@ describe('Add Expense', () => {
 
     // Fill in the form
     cy.wait(300)
-    cy.get('[data-cy="date_input"]').type('2024-12-31');
+    cy.get('[data-cy="date_input"]').type('2025-01-01');
     cy.get('[data-cy="category_input"]').select('RESTAURANTS');
     cy.get('[data-cy="description_input"]').type('Dinner with friends');
     cy.get('[data-cy="amount_input"]').type('50.75');
@@ -42,5 +42,21 @@ describe('Add Expense', () => {
 
     // Validate the expense was added
     cy.contains('Dinner with friends'); // Check if the new expense appears
+
+    // Delete the expense
+    cy.contains('Dinner with friends') // Locate the element containing the specific text
+      .parents('[data-cy="expense-item"]') // Adjust to the parent container of the expense item
+      .find('[data-cy="delete_button"]') // Find the delete button within this specific container
+      .click(); // Click the delete button
+
+    // Delete the expense
+    cy.contains('Dinner with friends')
+    .parents('[data-cy="expense-item"]') // Adjust to match the parent container
+    .find('[data-cy="delete_button"]')
+    .click();
+
+    // Assert the expense is no longer present
+    cy.contains('Dinner with friends').should('not.exist');
+
   });
 });

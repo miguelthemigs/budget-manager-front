@@ -37,7 +37,6 @@ export const fetchMonthlyExpenses = async (userId, month, year) => {
     }
 };
 
-
 export const fetchMonthlySpending = async (userId, filterDate) => {
     // Total expenses for selected month
   try {
@@ -71,3 +70,14 @@ export const fetchCategorySpending = async (userId, categoryBudgets, year, month
   }
   return updatedSpending;
 };
+
+export const fetchAllUsers = async () => {
+  try {
+    const response = await apiClient.get(`${API_BASE_URL}/user/all`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching all users:", error);
+    throw error;
+  }
+};
+

@@ -29,20 +29,20 @@ function LoginForm(props) {
 
   return (
     <form onSubmit={handleSubmit}>
-      <input
+      <input data-cy="email_input"
         type="text"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         placeholder="Email"
       />
-      <input
+      <input data-cy="password_input"
         type="password"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
         placeholder="Password"
       />
       {error && <div className="error">{error}</div>}
-      <button type="submit">Login</button>
+      <button data-cy="login_button" type="submit">Login</button>
     </form>
   );
 }

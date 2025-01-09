@@ -8,6 +8,8 @@
   padding: 10px;
   height: 80vh; /* Restrict height to avoid excessive vertical space */
   box-sizing: border-box;
+  
+ 
 }
 
 /* Left side (Spending and Form) */
@@ -17,7 +19,9 @@
   flex-direction: column;
   gap: 1px; /* Space between Spending and Form */
   background-color: #1a1a1a;
-  padding: 120px;
+  padding-left: 100px;
+  padding-right: 100px;
+  padding-top: 40px;
   border-radius: 8px;
 }
 
@@ -29,7 +33,9 @@
   justify-content: flex; /* Align items at the top */
   gap: 10px; /* Space between filter and list */
   background-color: #1a1a1a;
-  padding: 120px;
+  padding-left: 100px;
+  padding-right: 100px;
+  padding-top: 30px;
   border-radius: 8px;
   overflow-y: auto; /* Enable vertical scrolling */
   max-height: calc(100vh - 40px); /* Prevent overflowing vertically */
@@ -49,7 +55,7 @@
 }
 
 .expense-list:empty::after {
-  content: "No expenses to display. Add one above!"; /* Placeholder message */
+  content: "No expenses to display. Add one on the left!"; /* Placeholder message */
   color: #999;
   font-size: 18px;
   font-style: italic;
@@ -74,6 +80,16 @@
   display: flex;
   flex-direction: column;
   gap: 15px;
+ 
+}
+
+
+/* Form header */
+.expense-form h1 {
+  text-align: center;
+  font-size: 24px;
+  color: #ffffff;
+  margin-bottom: 5px;
 }
 
 .expense-label {
@@ -145,4 +161,11 @@
 
 .expense-item-actions button:hover {
   background-color: #555555;
+}
+
+.expense-logo {
+  height: 140px; /* Adjust as needed */
+  width: auto;
+  object-fit: contain;
+  cursor: grab;
 }

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import "../../pages/Pages.css"; // Import the CSS file
 
 function ExpenseForm({ onSubmit, editMode, categories, expense, userCurrency }) {
     const [category, setCategory] = useState(expense?.category || "");
@@ -30,6 +31,7 @@ function ExpenseForm({ onSubmit, editMode, categories, expense, userCurrency }) 
                     onChange={(e) => setCategory(e.target.value)}
                     required
                     className="expense-input"
+                    data-cy="category_input"
                 >
                     <option value="">Select a category</option>
                     {categories.map((cat) => (
@@ -46,6 +48,7 @@ function ExpenseForm({ onSubmit, editMode, categories, expense, userCurrency }) 
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     className="expense-input"
+                    data-cy="description_input"
                 />
             </div>
             <div>
@@ -56,6 +59,7 @@ function ExpenseForm({ onSubmit, editMode, categories, expense, userCurrency }) 
                     onChange={(e) => setAmount(e.target.value)}
                     required
                     className="expense-input"
+                    data-cy="amount_input"
                 />
             </div>
             <div>
@@ -66,9 +70,10 @@ function ExpenseForm({ onSubmit, editMode, categories, expense, userCurrency }) 
                     onChange={(e) => setDate(e.target.value)}
                     required
                     className="expense-input"
+                    data-cy="date_input"
                 />
             </div>
-            <button type="submit" className="expense-button">
+            <button data-cy="submit_button" type="submit" className="expense-button">
                 {editMode ? "Save Changes" : "Add Expense"}
             </button>
         </form>

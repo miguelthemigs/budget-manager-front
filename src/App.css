@@ -41,4 +41,8 @@
   color: #888;
 }
 
+.main-content {
+  padding-top: 45px; /* Adjust this value to match the navbar's height */
+}
+
 

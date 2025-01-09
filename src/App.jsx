@@ -8,7 +8,6 @@ import ProfilePage from "./pages/ProfilePage/ProfilePage.jsx";
 import SettingsPage from "./pages/SettingsPage/SettingsPage.jsx";
 import DashboardPage from "./pages/DashboardPage.jsx";
 import LoginPage from "./pages/Auth/LoginPage";
-import GraphDemoPage from "./pages/Overview/DemoPage.jsx";
 import OverviewPage from "./pages/Overview/OverviewPage";
 import RegistrationPage from "./pages/Auth/RegistrationPage";
 import ProtectedRoute from "./components/Auth/ProtectedRoute";
@@ -55,7 +54,7 @@ function App() {
   };
 
   return (
-    <div className="App">
+    <div className="main-content">
       <Router>
         {isAuthenticated && <NavBar onLogout={handleLogout} />}
         <Routes>
@@ -104,14 +103,6 @@ function App() {
             element={
               <ProtectedRoute
                 element={() => <OverviewPage />}
-              />
-            }
-          />
-          <Route
-            path="/demo"
-            element={
-              <ProtectedRoute
-                element={() => <GraphDemoPage />}
               />
             }
           />

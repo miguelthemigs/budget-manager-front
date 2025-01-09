@@ -12,6 +12,9 @@ const UserDetailsForm = ({
   currencies,
   onSave,
 }) => {
+    // Default currencies to an empty array if it's undefined
+    const safeCurrencies = currencies || [];
+
   return (
     <form className="SettingsPage__form" onSubmit={onSave}>
       <label className="SettingsPage__label">Name:</label>
@@ -38,7 +41,7 @@ const UserDetailsForm = ({
         required
       >
         <option value="">Select a currency</option>
-        {currencies.map((curr, index) => (
+        {safeCurrencies.map((curr, index) => (
           <option key={index} value={curr}>
             {curr}
           </option>

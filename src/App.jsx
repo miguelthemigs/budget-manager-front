@@ -125,7 +125,8 @@ function App() {
           <Route
             path="/dashboard"
             element={
-              <ProtectedRoute element={DashboardPage} roles={["ADMIN"]} />
+              <ProtectedRoute 
+              element={(props) => <DashboardPage {...props} currencies={currencies} />} roles={["ADMIN"]} />
             }
           />
         </Routes>

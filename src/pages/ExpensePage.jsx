@@ -31,7 +31,10 @@ function ExpensePage({ user, categories }) {
   const [monthlySpending, setMonthlySpending] = useState({});
   const [filterDate, setFilterDate] = useState(() => {
     const now = new Date();
-    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(
+      2,
+      "0"
+    )}`;
   });
 
   useEffect(() => {
@@ -42,12 +45,10 @@ function ExpensePage({ user, categories }) {
           ...prev,
           [filterDate]: response || 0,
         }));
-      }
-      catch (error) {
+      } catch (error) {
         console.error("Error fetching monthly spending", error);
         toast.error("Failed to fetch monthly spending.");
       }
-      
     };
     fetchData();
   }, [filterDate, userId]);
@@ -55,7 +56,11 @@ function ExpensePage({ user, categories }) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await fetchMonthlyExpenses(userId, filterDate.split("-")[1], filterDate.split("-")[0]);
+        const data = await fetchMonthlyExpenses(
+          userId,
+          filterDate.split("-")[1],
+          filterDate.split("-")[0]
+        );
         setExpenses(data || []); // Fallback to an empty array if data is undefined
       } catch (error) {
         console.error("Error fetching monthly expenses", error);
@@ -63,10 +68,9 @@ function ExpensePage({ user, categories }) {
         setExpenses([]); // Clear expenses in case of an error
       }
     };
-  
+
     fetchData();
   }, [filterDate, userId]);
-  
 
   // Filter expenses by the current month
   const filteredExpenses = expenses.filter((expense) => {
@@ -76,6 +80,15 @@ function ExpensePage({ user, categories }) {
     ).padStart(2, "0")}`;
     return expenseYearMonth === filterDate;
   });
+
+  const handleFilterChange = (date) => {
+    if (date) {
+      const formattedDate = `${date.getFullYear()}-${String(
+        date.getMonth() + 1
+      ).padStart(2, "0")}`;
+      setFilterDate(formattedDate);
+    }
+  };
 
   const handleAddOrEditExpense = async (newExpense) => {
     try {
@@ -90,7 +103,10 @@ function ExpensePage({ user, categories }) {
 
       if (editMode) {
         // Send a PUT request to update the expense
-        await apiClient.put(`${API_BASE_URL}/expenses/${editExpenseId}`, expenseData);
+        await apiClient.put(
+          `${API_BASE_URL}/expenses/${editExpenseId}`,
+          expenseData
+        );
         toast.success("Expense updated successfully!");
       } else {
         // Send a POST request to add a new expense
@@ -130,7 +146,9 @@ function ExpensePage({ user, categories }) {
   };
 
   const handleDeleteClick = async (expenseId) => {
-    const confirmed = window.confirm("Are you sure you want to delete this expense?");
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this expense?"
+    );
     if (confirmed) {
       try {
         await apiClient.delete(`${API_BASE_URL}/expenses/${expenseId}`);
@@ -153,14 +171,19 @@ function ExpensePage({ user, categories }) {
   // Prepare the current expense data for the form
   const currentExpense = editMode
     ? { category, description, amount, date }
-    : { category: "", description: "", amount: "", date: new Date().toISOString().split("T")[0] }; // Default values
+    : {
+        category: "",
+        description: "",
+        amount: "",
+        date: new Date().toISOString().split("T")[0],
+      }; // Default values
 
   return (
     <div className="expense-container">
       {/* Left side: Monthly Spending and Form */}
       <div className="expense-left">
-      <img src={logo} alt="Budget Manager Logo" className="expense-logo" />
-        <MonthlySpending spending={monthlySpending[filterDate]} />
+        <img src={logo} alt="Budget Manager Logo" className="expense-logo" />
+        <MonthlySpending spending={monthlySpending[filterDate]} currency={user?.preferredCurrency} />
         <ExpenseForm
           onSubmit={handleAddOrEditExpense}
           editMode={editMode}
@@ -172,7 +195,11 @@ function ExpensePage({ user, categories }) {
 
       {/* Right side: Expense List */}
       <div className="expense-right">
-        <ExpenseFilter filterDate={filterDate} onFilterChange={setFilterDate} />
+        <ExpenseFilter
+          filterDate={new Date(`${filterDate}-01`)}
+          onFilterChange={handleFilterChange}
+        />
+
         <ExpenseList
           expenses={filteredExpenses}
           onEdit={handleEditClick}

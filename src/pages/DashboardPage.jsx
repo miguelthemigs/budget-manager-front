@@ -9,7 +9,7 @@ import UserDetailsForm from "../components/Settings/UserDetailsForm";
 import EditUserModal from "../components/Dashboard/EditUserModal"; // Import the renamed modal component
 import { FaTrash, FaEdit } from "react-icons/fa"; // Importing the icons
 
-function DashboardPage() {
+function DashboardPage({currencies}) {
     const [users, setUsers] = useState([]);
     const [isEditing, setIsEditing] = useState(false);
     const [error, setError] = useState(null);
@@ -92,7 +92,7 @@ function DashboardPage() {
                 setMonthlyBudget={(value) => setSelectedUser({ ...selectedUser, monthlyBudget: value })}
                 email={selectedUser.email}
                 setEmail={(value) => setSelectedUser({ ...selectedUser, email: value })}
-                currencies={['USD', 'EUR', 'GBP']} // Example list of currencies
+                currencies={currencies} // Example list of currencies
                 onSave={() => handleUpdateUserDetails(selectedUser)}
               />
             </EditUserModal>

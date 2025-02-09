@@ -16,6 +16,7 @@ Key features include role-based access control, insightful visualizations powere
   - **Admin**: Access admin dashboard to view and manage user roles.
 
 ![image](https://github.com/user-attachments/assets/05fea728-2f9f-4cf5-bf3f-dd21ecb84f87)
+
 (this dashboard is only avaliable to user with admin role)
 
 

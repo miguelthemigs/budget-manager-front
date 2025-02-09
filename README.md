@@ -18,12 +18,16 @@ Key features include role-based access control, insightful visualizations powere
 ### Expense Management  
 - **Add Expenses**: Log your expenses with details and categories.  
 - **Filter by Month**: View and analyze expenses for specific time periods.  
-- **Category Budgets**: Set and edit budgets for different expense categories.  
+- **Category Budgets**: Set and edit budgets for different expense categories.
+![image](https://github.com/user-attachments/assets/de25e28b-855d-49a2-bda5-f990dd84e39e)
+
 
 ### Insights and Visualizations  
 - **Overview Page**:  
   - Analyze spending habits with date filtering options.  
-  - Interactive charts and graphs powered by **Recharts**.  
+  - Interactive charts and graphs powered by **Recharts**.
+![image](https://github.com/user-attachments/assets/87a2a484-afd3-4748-b281-450d25755a4a)
+
 - **Profile Page**:  
   - Detailed insights into spending habits.  
   - Graphs and analytics on spending by category and budgets.  

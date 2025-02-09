@@ -13,24 +13,27 @@ Key features include role-based access control, insightful visualizations powere
 - **Register and Log In**: Secure authentication for all users.  
 - **User Roles**:  
   - **User**: Access personal dashboards, manage expenses, and budgets.  
-  - **Admin**: Access admin dashboard to view and manage user roles.  
+  - **Admin**: Access admin dashboard to view and manage user roles.
+  ![image](https://github.com/user-attachments/assets/05fea728-2f9f-4cf5-bf3f-dd21ecb84f87)
+(this dashboard is only avaliable to user with admin role)
+
 
 ### Expense Management  
 - **Add Expenses**: Log your expenses with details and categories.  
 - **Filter by Month**: View and analyze expenses for specific time periods.  
 - **Category Budgets**: Set and edit budgets for different expense categories.
-![image](https://github.com/user-attachments/assets/de25e28b-855d-49a2-bda5-f990dd84e39e)
-
+![image](https://github.com/user-attachments/assets/eb3e9b0b-153f-404d-a094-84c7ef35e9d6)
 
 ### Insights and Visualizations  
 - **Overview Page**:  
   - Analyze spending habits with date filtering options.  
   - Interactive charts and graphs powered by **Recharts**.
-![image](https://github.com/user-attachments/assets/87a2a484-afd3-4748-b281-450d25755a4a)
+![image](https://github.com/user-attachments/assets/1ad3da11-3052-4a9a-a148-5e736980a8cf)
 
 - **Profile Page**:  
   - Detailed insights into spending habits.  
-  - Graphs and analytics on spending by category and budgets.  
+  - Graphs and analytics on spending by category and budgets.
+![image](https://github.com/user-attachments/assets/66089f24-b309-40c1-8214-875ed391d98e)
 
 ### User Settings  
 - Update profile details.  
